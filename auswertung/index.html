@@ -59,7 +59,7 @@ details{border-top:1px solid var(--line);padding:8px 0}summary{cursor:pointer;fo
  </section>
 
  <section class="card" id="kanaele"><h2>Projekttage: KPIs und Kanäle</h2>
-  <p class="muted" style="margin:0 0 10px">Haupt-KPI laut Projekttage: <b>Conversion Rate = Formulareinsendungen ÷ Besuche × 100</b> (von Besuch der Landingpage zu gesendetem Formular „Vormerken“ oder „Idee“). Unterstützend: <b>Klickrate in den Test</b> (Besuch → Klick auf „Test starten“) und <b>Abschlussquote</b> (Test gestartet → Anfrage abgeschickt). Kurs-Tester (<code>?utm_source=kurs</code>, <code>?quelle=dozent</code>) werden getrennt gezählt, weil sie Aufgabe und Kontext kennen.</p>
+  <p class="muted" style="margin:0 0 10px">Haupt-KPI laut Projekttage: <b>Conversion Rate = Formulareinsendungen ÷ Besuche × 100</b> (von Besuch der Landingpage zu gesendetem Formular „Vormerken“ oder „Idee“). Unterstützend: <b>Klickrate in den Test</b> (Besuch → Klick auf „Test starten“) und <b>Abschlussquote</b> (Test gestartet → Anfrage abgeschickt). Kurs-Tester (<code>?utm_source=kurs</code>, <code>?quelle=dozent</code>) werden getrennt gezählt, weil sie Aufgabe und Kontext kennen. Eigene Tests mit <code>?quelle=intern</code> zählen nicht mit.</p>
   <div id="pkpi" class="scroll" tabindex="0" role="region" aria-label="Projekttage-KPIs"></div>
   <h3 style="margin:18px 0 6px">Welcher Kanal bringt echte Testende?</h3>
   <p class="muted" style="margin:0 0 8px">Jeder Kanal hat einen eigenen Link (<code>?quelle=…</code>). „direkt“ = ohne Kennzeichnung, „verweis“ = von einer anderen Website ohne Kennzeichnung. Kleine Zahlen sind Einzelfälle, keine Statistik.</p>
@@ -205,10 +205,10 @@ function renderKan(D){
   return {n:n,cta:cta,ts:ts,an:an,ok:ok,fo:fo,nps:nps,npsn:np.length}}
  var P=function(a,b){return b?Math.round(a/b*1000)/10:null},pf=function(v){return v==null?'–':String(v).replace('.',',')+' %'};
  var g={};lp.forEach(function(s){var k=q(s);(g[k]=g[k]||[]).push(s)});
- KROWS=Object.keys(g).map(function(k){var a=agg(g[k]);return {kanal:k,gruppe:KURS[k]?'Kurs':'extern',besuche:a.n,klick_test:a.cta,klickrate:P(a.cta,a.n),test_gestartet:a.ts,anfrage_gesendet:a.an,abschlussquote:P(a.an,a.ts),richtiges_produkt:a.ok,formulare:a.fo,conversion_rate:P(a.fo,a.n),nps:a.nps,nps_antworten:a.npsn}}).sort(function(a,b){return b.besuche-a.besuche});
+ KROWS=Object.keys(g).map(function(k){var a=agg(g[k]);return {kanal:k,gruppe:k==='intern'?'eigene Tests':KURS[k]?'Kurs':'extern',besuche:a.n,klick_test:a.cta,klickrate:P(a.cta,a.n),test_gestartet:a.ts,anfrage_gesendet:a.an,abschlussquote:P(a.an,a.ts),richtiges_produkt:a.ok,formulare:a.fo,conversion_rate:P(a.fo,a.n),nps:a.nps,nps_antworten:a.npsn}}).sort(function(a,b){return b.besuche-a.besuche});
  $('kan').innerHTML=KROWS.length?tbl(['Kanal','Gruppe','Besuche','Klick in Test','Klickrate','Test gestartet','Anfrage gesendet','Abschlussquote','richtiges Produkt','Formulare','Conversion Rate','NPS'],
   KROWS.map(function(r){return [esc(r.kanal),r.gruppe,r.besuche,r.klick_test,pf(r.klickrate),r.test_gestartet,r.anfrage_gesendet,pf(r.abschlussquote),r.richtiges_produkt,r.formulare,pf(r.conversion_rate),r.nps==null?'–':(r.nps>0?'+':'')+r.nps+' (n='+r.nps_antworten+')']})):'<div class="empty">Noch keine Besuche.</div>';
- var parts=[['Gesamt',lp],['Kurs-Tester',lp.filter(function(s){return KURS[q(s)]})],['Extern (ohne Kurs)',lp.filter(function(s){return !KURS[q(s)]})]];
+ var ext=lp.filter(function(s){return q(s)!=='intern'});var parts=[['Gesamt (ohne eigene Tests)',ext],['Kurs-Tester',ext.filter(function(s){return KURS[q(s)]})],['Extern (ohne Kurs)',ext.filter(function(s){return !KURS[q(s)]})],['Eigene Tests (?quelle=intern)',lp.filter(function(s){return q(s)==='intern'})]];
  $('pkpi').innerHTML=tbl(['Gruppe','Besuche','Formulare','Conversion Rate','Klickrate in den Test','Abschlussquote im Test'],parts.map(function(p){var a=agg(p[1]);return ['<b>'+p[0]+'</b>',a.n,a.fo,'<b>'+pf(P(a.fo,a.n))+'</b>',pf(P(a.cta,a.n)),pf(P(a.an,a.ts))]}));
  var cnt=function(list){var o={};list.forEach(function(x){x=x||'unbekannt';o[x]=(o[x]||0)+1});return Object.keys(o).sort(function(a,b){return o[b]-o[a]}).map(function(k){return [esc(k),o[k]]})};
  $('kland').innerHTML=tbl(['Land','Besuche'],cnt(lp.map(function(s){return s.meta&&s.meta.land})));
