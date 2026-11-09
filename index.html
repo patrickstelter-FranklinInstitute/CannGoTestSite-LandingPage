@@ -1,0 +1,687 @@
+<!doctype html>
+<html lang="de" data-seite="landingpage" data-root="">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Klare Folgeanfrage · CannGo UX-Konzept</title>
+<meta name="description" content="UX-Konzept eines Lehrprojekts: erst das Produkt, dann die Gesundheit. Mit klickbarem Test und weiteren Ideen.">
+<link rel="stylesheet" href="assets/fonts.css">
+<script src="assets/messkonzept.js"></script>
+<script src="assets/track.js"></script>
+<script src="assets/consent.js"></script>
+<style>
+:root{
+  --forest:#0f2a1f; --forest-2:#163a2b; --leaf:#2f7347; --leaf-soft:#eaf5e6; --lime:#c6f169;
+  --cream:#f6f1e7; --paper:#ffffff; --ink:#14201a; --muted:#56645c; --line:#e2dccd; --amber:#ffb547;
+  --med:#1f56b3; --med-bg:#e7efff; --med-line:#5d8fe0; --bad:#b3261e;
+  --radius:20px; color-scheme:light;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);background:var(--cream);line-height:1.6;font-size:17px}
+h1,h2,h3{font-family:"Fraunces",Georgia,serif;font-weight:600;line-height:1.1;letter-spacing:-.01em;text-wrap:balance}
+a{color:inherit}
+[hidden]{display:none!important}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+/* Hinweisband */
+.demo-band{background:var(--forest);color:#e9f3ec;font-size:.85rem;text-align:center;padding:.45rem max(16px,env(safe-area-inset-left,0px))}
+.demo-band b{color:var(--lime)}
+
+/* Navigation */
+.nav{position:sticky;top:0;z-index:20;background:rgba(246,241,231,.93);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding-block:.8rem}
+.nav nav{display:flex;gap:1.5rem}
+.nav nav a{text-decoration:none;font-weight:500;font-size:.95rem;color:var(--muted)}
+.nav nav a:hover{color:var(--ink)}
+.logo{display:inline-flex;align-items:center;gap:.55rem;font-family:"Fraunces",serif;font-weight:600;font-size:1.3rem;text-decoration:none}
+.logo small{font-family:"Instrument Sans",sans-serif;font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.logo-mark{display:grid;place-items:center;width:2rem;height:2rem;border-radius:10px;background:var(--forest);color:var(--lime);font-size:1.05rem}
+
+.btn{display:inline-flex;align-items:center;gap:.4rem;border:0;cursor:pointer;font:inherit;font-weight:700;text-decoration:none;border-radius:999px;padding:.95rem 1.6rem;transition:transform .15s,box-shadow .15s}
+.btn:hover{transform:translateY(-2px)}
+.btn:focus-visible{outline:3px solid var(--amber);outline-offset:3px}
+.btn-primary{background:var(--forest);color:var(--lime);box-shadow:0 8px 24px -10px var(--forest)}
+.btn-ghost{background:transparent;color:var(--forest);border:2px solid var(--forest)}
+.btn-small{padding:.55rem 1.1rem;font-size:.9rem;background:var(--forest);color:var(--lime)}
+.btn-lime{background:var(--lime);color:var(--forest)}
+
+.eyebrow{text-transform:uppercase;letter-spacing:.14em;font-size:.76rem;font-weight:700;color:var(--leaf);margin-bottom:1rem}
+.eyebrow.light{color:var(--lime)}
+.lead{font-size:1.15rem;color:var(--muted);max-width:40rem}
+section{scroll-margin-top:80px}
+
+/* Hero */
+.hero .wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:3rem;align-items:center;padding-block:clamp(3rem,7vw,5.5rem)}
+.hero h1{font-size:clamp(2.5rem,5.6vw,4.4rem);margin-bottom:1.25rem}
+.hero h1 em{color:var(--leaf);font-style:italic}
+.cta-row{display:flex;gap:.8rem;flex-wrap:wrap;margin:2rem 0 1.4rem}
+.trust{display:flex;gap:.6rem 1.6rem;list-style:none;color:var(--muted);font-size:.92rem;flex-wrap:wrap}
+.trust strong{color:var(--ink)}
+.disc{margin-top:1.4rem;font-size:.88rem;color:var(--muted);border-left:3px solid var(--med);padding-left:.8rem;max-width:38rem}
+
+/* Handy */
+.phone{justify-self:center;width:300px;max-width:100%;aspect-ratio:9/18.5;border-radius:44px;background:var(--ink);padding:12px;box-shadow:0 40px 80px -30px rgba(15,42,31,.55);transform:rotate(2.5deg)}
+.screen{height:100%;border-radius:34px;overflow:hidden;background:#141c25;color:#eef3f6;padding:1.1rem .9rem;display:flex;flex-direction:column;gap:.55rem;font-size:.74rem}
+.screen .bar{display:flex;justify-content:space-between;font-weight:700;color:#aab8c1;font-size:.66rem;letter-spacing:.06em;text-transform:uppercase}
+.screen h4{font-family:"Fraunces",serif;font-size:1.05rem;font-weight:600;line-height:1.15;color:#fff}
+.screen .row{display:flex;justify-content:space-between;align-items:center;gap:.5rem;background:#1e2933;border:1px solid #3d4b56;border-radius:12px;padding:.55rem .65rem}
+.screen .row b{display:block;font-size:.8rem}
+.screen .row small{color:#aab8c1}
+.screen .med{background:#13253f;border-color:#4f86d9}
+.screen .med b{color:#bcd6ff}
+.screen .chg{color:#9fd0ff;font-weight:700;font-size:.68rem;white-space:nowrap}
+.screen .sum{display:flex;justify-content:space-between;font-weight:700;font-size:.85rem;padding:.2rem .2rem 0}
+.screen .send{margin-top:auto;background:#0f7d4c;color:#fff;text-align:center;font-weight:700;border-radius:10px;padding:.65rem}
+.screen .note{display:flex;gap:.45rem;background:#fff;color:var(--ink);border-radius:12px;padding:.55rem .6rem;animation:drop .8s .4s both}
+.screen .note i{flex:none;width:9px;height:9px;border-radius:50%;background:#0f7d4c;margin-top:.3rem}
+@keyframes drop{from{opacity:0;transform:translateY(-14px)}}
+
+/* Problem */
+.block{padding-block:clamp(3.5rem,7vw,5.5rem)}
+.block h2{font-size:clamp(2rem,4vw,3rem);margin-bottom:1rem}
+.problem-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.4rem;margin-top:2.2rem}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:1.6rem}
+.card h3{font-size:1.3rem;margin-bottom:.6rem}
+.card p{color:var(--muted)}
+.quote{font-family:"Fraunces",serif;font-size:1.35rem;line-height:1.35;color:var(--ink);margin:.4rem 0 1rem}
+.quote small{display:block;font-family:"Instrument Sans",sans-serif;font-size:.85rem;color:var(--muted);margin-top:.5rem}
+.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:1rem}
+.fact{background:var(--leaf-soft);border-radius:14px;padding:1rem}
+.fact b{display:block;font-family:"Fraunces",serif;font-size:1.7rem;color:var(--forest)}
+.fact span{font-size:.88rem;color:var(--muted)}
+
+/* Lösung (dunkler Block) */
+.improve{background:var(--forest);color:#eef4ef;border-radius:clamp(0px,3vw,36px);margin-inline:clamp(0rem,2vw,1.5rem)}
+.improve h2{font-size:clamp(2.1rem,4.6vw,3.4rem);max-width:18ch}
+.improve .lead{color:#c6d4ca}
+.compare{display:grid;grid-template-columns:1fr auto 1fr;gap:1.4rem;margin-top:2.6rem}
+.col{border-radius:var(--radius);padding:1.8rem}
+.col h3{font-size:1.35rem;margin-bottom:1rem}
+.col ul{list-style:none;display:grid;gap:.75rem}
+.col li{padding-left:1.75rem;position:relative}
+.before{background:var(--forest-2);color:#c3d1c8}
+.before li::before{content:"✕";position:absolute;left:0;color:#f19a8c}
+.after{background:var(--lime);color:var(--forest)}
+.after li::before{content:"✓";position:absolute;left:0;font-weight:700}
+.arrow{align-self:center;font-size:2rem;color:var(--lime)}
+.steps{list-style:none;display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:2rem}
+.steps li{display:flex;gap:1rem;border:1px solid rgba(255,255,255,.18);border-radius:16px;padding:1rem 1.2rem}
+.steps b.n{display:grid;place-items:center;flex:none;width:2.2rem;height:2.2rem;border-radius:50%;background:var(--lime);color:var(--forest);font-family:"Fraunces",serif}
+.steps strong{display:block;color:#fff}
+.steps span{color:#c6d4ca;font-size:.93rem}
+.legend{display:flex;flex-wrap:wrap;gap:.6rem 1.4rem;margin-top:2rem;font-size:.92rem;color:#d7e3da}
+.legend i{display:inline-block;width:1.1rem;height:.8rem;border-radius:4px;margin-right:.4rem;vertical-align:-1px}
+
+/* Klicktest */
+.test-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:2rem;margin-top:2rem;align-items:start}
+.flow{list-style:none;display:grid;gap:.7rem;counter-reset:f}
+.flow li{counter-increment:f;display:flex;gap:.9rem;align-items:flex-start;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:.9rem 1rem}
+.flow li::before{content:counter(f);display:grid;place-items:center;flex:none;width:1.9rem;height:1.9rem;border-radius:50%;background:var(--forest);color:var(--lime);font-weight:700}
+.flow small{display:block;color:var(--muted)}
+.choice{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-top:1.2rem}
+.choice a{display:block;text-decoration:none;background:var(--paper);border:2px solid var(--forest);border-radius:16px;padding:1rem;font-weight:700}
+.choice a small{display:block;font-weight:400;color:var(--muted)}
+.choice a:hover{background:var(--leaf-soft)}
+.side{display:grid;gap:1rem}
+.measure{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:1.4rem}
+.measure h3{font-size:1.15rem;margin-bottom:.5rem}
+.measure ul{padding-left:1.1rem;color:var(--muted);font-size:.94rem;display:grid;gap:.25rem}
+
+/* Formulare */
+.form{display:grid;gap:1rem;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:1.6rem}
+.form label{display:grid;gap:.4rem;font-weight:600;font-size:.94rem}
+.form .opt{font-weight:400;color:var(--muted)}
+.form input[type=text],.form input[type=email],.form select,.form textarea{font:inherit;padding:.8rem 1rem;border:1.5px solid #cfc7b4;border-radius:12px;background:var(--cream);color:var(--ink);width:100%}
+.form textarea{min-height:7rem;resize:vertical}
+.form input,.form select,.form textarea{font-weight:400}
+.form input:focus,.form select:focus,.form textarea:focus{outline:3px solid var(--amber);outline-offset:2px;border-color:var(--leaf);background:#fff}
+.form fieldset{border:0}
+.form legend{font-weight:600;font-size:.94rem;margin-bottom:.5rem}
+.radio-row{display:flex;gap:.6rem;flex-wrap:wrap}
+.radio-row label{display:flex;align-items:center;gap:.4rem;border:1.5px solid #cfc7b4;border-radius:999px;padding:.45rem .95rem;cursor:pointer;font-weight:500}
+.radio-row label:has(input:checked){border-color:var(--leaf);box-shadow:inset 0 0 0 1px var(--leaf)}
+.radio-row input{accent-color:var(--leaf)}
+.form .check{display:flex;gap:.6rem;align-items:flex-start;font-weight:400;color:var(--muted);font-size:.88rem}
+.form .check input{margin-top:.25rem;width:1.15rem;height:1.15rem;accent-color:var(--leaf);flex:none}
+.form button{justify-self:start}
+.form .err{color:var(--bad);font-size:.92rem;margin:0}
+.hp{position:absolute;left:-9999px}
+.ok{background:var(--leaf-soft);border-radius:var(--radius);padding:1.4rem}
+.ok b{font-family:"Fraunces",serif;font-size:1.3rem;font-weight:600}
+
+/* Ideen */
+.ideas-head{display:flex;justify-content:space-between;align-items:end;gap:1rem;flex-wrap:wrap}
+.tabs{display:flex;gap:.5rem;flex-wrap:wrap}
+.tabs button{font:inherit;font-weight:600;font-size:.92rem;border:1.5px solid var(--forest);background:transparent;color:var(--forest);border-radius:999px;padding:.45rem 1rem;cursor:pointer}
+.tabs button[aria-pressed=true]{background:var(--forest);color:var(--lime)}
+.ideas{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.2rem;margin-top:1.8rem}
+.idea{display:flex;flex-direction:column;gap:.7rem;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:1.4rem;min-width:0}
+@media (min-width:961px){.ideas .idea:last-child:nth-child(3n+1){grid-column:1/-1}}
+.idea .top{display:flex;justify-content:space-between;align-items:center;gap:.5rem}
+.idea .ico{font-size:1.6rem}
+.tag{font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:.2rem .6rem;background:var(--leaf-soft);color:var(--forest)}
+.tag.med{background:var(--med-bg);color:var(--med)}
+.tag.alt{background:#f3ead6;color:#6b4e12}
+.idea h3{font-size:1.25rem}
+.idea dl{display:grid;gap:.45rem;font-size:.93rem}
+.idea dt{font-weight:700;font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--leaf)}
+.idea dd{color:var(--muted)}
+.idea .kpi{background:var(--cream);border-radius:12px;padding:.6rem .75rem;font-size:.88rem}
+.idea .kpi b{color:var(--ink)}
+.vote{margin-top:auto;display:flex;flex-direction:column;align-items:flex-start;gap:.35rem;padding-top:.4rem}
+.vote button{white-space:nowrap;font:inherit;font-weight:700;font-size:.9rem;border:1.5px solid var(--forest);background:transparent;color:var(--forest);border-radius:999px;padding:.45rem .9rem;cursor:pointer}
+.vote button[aria-pressed=true]{background:var(--forest);color:var(--lime)}
+.vote small{color:var(--muted);font-size:.8rem}
+details.more{font-size:.9rem;color:var(--muted)}
+details.more summary{cursor:pointer;font-weight:600;color:var(--forest)}
+details.more ul{margin:.5rem 0 0 1.1rem;display:grid;gap:.25rem}
+
+/* Vorschlag */
+.suggest{display:grid;grid-template-columns:.9fr 1.1fr;gap:3rem}
+.suggest-copy p{color:var(--muted);margin-bottom:1rem}
+.hint{background:var(--paper);border-left:4px solid var(--leaf);padding:1rem 1.2rem;border-radius:0 12px 12px 0;color:var(--muted)}
+
+/* Daten */
+.data-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem;margin-top:1.6rem}
+.data-grid .card h3{font-size:1.1rem}
+.data-grid .card p{font-size:.94rem}
+.data-actions{display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1.4rem}
+
+/* Footer */
+.footer{border-top:1px solid var(--line);color:var(--muted);font-size:.9rem}
+.footer .wrap{display:grid;grid-template-columns:2fr 1fr;gap:2rem;padding-block:2.4rem 6.5rem}
+.footer p{margin-top:.6rem;max-width:42rem}
+.footer nav{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;justify-content:flex-end;align-items:flex-start}
+.footer a{color:var(--muted)}
+
+@media (max-width:960px){
+  .hero .wrap,.suggest,.test-grid,.problem-grid{grid-template-columns:1fr}
+  .ideas,.data-grid{grid-template-columns:1fr 1fr}
+  .compare{grid-template-columns:1fr}.arrow{transform:rotate(90deg);justify-self:center}
+  .steps{grid-template-columns:1fr}
+  .nav nav{display:none}
+}
+@media (max-width:600px){
+  .ideas,.data-grid,.facts,.choice{grid-template-columns:1fr}
+  .footer .wrap{grid-template-columns:1fr}.footer nav{justify-content:flex-start}
+  .phone{width:260px;transform:none}
+  body{font-size:16px}
+  .logo small{display:none}
+  .btn-small{white-space:nowrap}
+}
+
+/* Barrierefreiheit: sichtbarer Fokus überall, Sprunglink */
+:focus-visible{outline:3px solid #f8d048;outline-offset:3px}
+.skip{position:absolute;left:12px;top:-60px;z-index:999;background:#f8d048;color:#0f2a1f;font-weight:700;padding:.6rem 1rem;border-radius:8px;text-decoration:none}
+.skip:focus{top:12px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<nav aria-label="Sprunglink"><a class="skip" href="#top">Zum Inhalt springen</a></nav>
+<div class="demo-band" role="region" aria-label="Hinweis zum Lehrprojekt"><b>Lehrprojekt</b> · UX-Konzept im Kurs Produktmanagement · keine offizielle CannGo-Seite · keine medizinische Beratung · fiktive Testprodukte</div>
+
+<header class="nav">
+ <div class="wrap">
+  <a class="logo" href="#top" data-nav="top"><span class="logo-mark">C</span>CannGo <small>UX-Konzept</small></a>
+  <nav aria-label="Abschnitte">
+   <a href="#problem" data-nav="problem">Problem</a>
+   <a href="#loesung" data-nav="loesung">Lösung</a>
+   <a href="#klicktest" data-nav="klicktest">Klicktest</a>
+   <a href="#ideen" data-nav="ideen">Weitere Ideen</a>
+   <a href="#vorschlag" data-nav="vorschlag">Idee einreichen</a>
+  </nav>
+  <a class="btn btn-small js-test" href="app/index.html" data-pos="nav">Klicktest starten</a>
+ </div>
+</header>
+
+<main id="top" tabindex="-1">
+ <section class="hero" data-abschnitt="hero">
+  <div class="wrap">
+   <div>
+    <p class="eyebrow">Folgeanfrage für dein Cannabis-Rezept · Konzept</p>
+    <h1>Produkt wechseln, <em>ohne</em> über deine Gesundheit zu stolpern.</h1>
+    <p class="lead">Mein Vorschlag für die Folgeanfrage in der CannGo-App: Erst wählst du das Produkt, dann beantwortest du getrennt die Gesundheitsfrage. Vor dem Absenden siehst du alles auf einen Blick.</p>
+    <div class="cta-row">
+     <a class="btn btn-primary js-test" href="app/index.html" data-pos="hero" id="cta">Klick-Entwurf ausprobieren →</a>
+     <a class="btn btn-ghost" href="#loesung" data-nav="loesung-hero">So funktioniert’s</a>
+    </div>
+    <ul class="trust">
+     <li><strong>ca. 10 Min.</strong> Testdauer</li>
+     <li><strong>Ohne Konto</strong>, mit anonymem Code</li>
+     <li><strong>Fiktive</strong> Testprodukte A–F</li>
+    </ul>
+    <p class="disc">Ich teste die App, nicht dich. Bitte gib keine echten Gesundheitsdaten ein: Die Gesundheitsfrage im Test bezieht sich nur auf eine erfundene Situation.</p>
+   </div>
+   <div class="phone" aria-hidden="true">
+    <div class="screen">
+     <div class="bar"><span>Folgeanfrage</span><span>3 von 3</span></div>
+     <div class="note"><i></i><span><b>Alles bereit.</b> Prüf kurz deine Angaben, dann geht die Anfrage an die Ärztin oder den Arzt.</span></div>
+     <h4>Deine Anfrage auf einen Blick</h4>
+     <div class="row"><span><b>Testprodukt B</b><small>5 g · neu gewählt</small></span><span class="chg">Produkt ändern</span></div>
+     <div class="row med"><span><b>⚕ Gesundheit</b><small>unverändert seit letzter Anfrage</small></span><span class="chg">Gesundheit ändern</span></div>
+     <div class="row med"><span><b>⚕ Ärztliche Prüfung</b><small>Online-Anfrage</small></span><span>14,99 €</span></div>
+     <div class="sum"><span>Gesamt (geschätzt)</span><span>48,74 €</span></div>
+     <div class="send">Anfrage absenden</div>
+    </div>
+   </div>
+  </div>
+ </section>
+
+ <section id="problem" class="block" data-abschnitt="problem">
+  <div class="wrap">
+   <p class="eyebrow">Das Problem</p>
+   <h2>Eine ehrliche Antwort führt zum falschen Produkt.</h2>
+   <p class="lead">Wer nur ein anderes Produkt möchte, wird heute zuerst gefragt, ob sich die Gesundheit geändert hat. Wer ehrlich „Nein“ sagt, landet beim alten Produkt.</p>
+   <div class="problem-grid">
+    <div class="card">
+     <h3>So fragt die App heute</h3>
+     <p class="quote">„Hat sich etwas an deinem Gesundheitszustand geändert?“<small>Darunter klein: Wer eine andere Medikation möchte, soll „Ja, bearbeiten“ wählen.</small></p>
+     <p>Produktwunsch und Gesundheit stecken in einer Frage. Den Hinweis im Kleingedruckten übersieht man leicht.</p>
+    </div>
+    <div class="card">
+     <h3>Was im Test passiert ist</h3>
+     <p>Testperson T21 wollte Produkt B, antwortete wahrheitsgemäß „Nein“ und schickte die Anfrage mit Produkt A ab. Sie war sich trotzdem ziemlich sicher, B bestellt zu haben.</p>
+     <div class="facts">
+      <div class="fact"><b>A statt B</b><span>in der alten Version (IST)</span></div>
+      <div class="fact"><b>4 von 5</b><span>Sicherheit, das Richtige bestellt zu haben</span></div>
+      <div class="fact"><b>B ✓</b><span>in meiner neuen Version (SOLL)</span></div>
+     </div>
+     <p style="margin-top:.9rem;font-size:.85rem">Erste Tests vom 03.11.2026, kleine Stichprobe. Darum teste ich weiter.</p>
+    </div>
+   </div>
+  </div>
+ </section>
+
+ <section id="loesung" class="block improve" data-abschnitt="loesung">
+  <div class="wrap">
+   <p class="eyebrow light">Mein Verbesserungsvorschlag</p>
+   <h2>Erst das Produkt, dann die Gesundheit.</h2>
+   <p class="lead">Zwei getrennte Fragen statt einer, eine Übersicht vor dem Absenden und klare Farben für alles Ärztliche.</p>
+   <div class="compare">
+    <div class="col before"><h3>Heute</h3><ul>
+     <li>Eine Frage mischt Gesundheit und Produktwunsch</li>
+     <li>„Nein“ übernimmt still das alte Produkt</li>
+     <li>Die Prüfgebühr taucht erst spät auf</li>
+     <li>Vor dem Absenden fehlt eine klare Übersicht</li></ul></div>
+    <div class="arrow" aria-hidden="true">→</div>
+    <div class="col after"><h3>Mit dem Vorschlag</h3><ul>
+     <li>Schritt 1: Produkt wählen, „Neu“ oder „Letztes Mal“</li>
+     <li>Schritt 2: Gesundheit getrennt, mit „Warum wir fragen“</li>
+     <li>Gebühr steht im Gesamtpreis des Warenkorbs</li>
+     <li>Übersicht mit „Produkt ändern“ und „Gesundheit ändern“</li></ul></div>
+   </div>
+   <ol class="steps">
+    <li><b class="n">1</b><span><strong>Produkt wählen</strong>Du suchst es selbst aus, nichts wird still übernommen.</span></li>
+    <li><b class="n">2</b><span><strong>⚕ Gesundheit beantworten</strong>Mit kurzer Erklärung, warum die Praxis das wissen muss.</span></li>
+    <li><b class="n">3</b><span><strong>Prüfen und absenden</strong>Alles auf einen Blick, jede Angabe direkt änderbar.</span></li>
+   </ol>
+   <div class="legend" aria-label="Farblegende im Klick-Entwurf">
+    <span><i style="background:#0f7d4c"></i>Grün: Aktion, Erfolg</span>
+    <span><i style="background:#2a66c9"></i>⚕ Blau: alles Ärztliche</span>
+    <span><i style="background:#f0a35e"></i>Orange: Achtung</span>
+    <span><i style="background:#8a99a3"></i>Grau: letztes Mal</span>
+   </div>
+  </div>
+ </section>
+
+ <section id="klicktest" class="block" data-abschnitt="klicktest">
+  <div class="wrap">
+   <p class="eyebrow">Probier es selbst</p>
+   <h2>Der Klicktest: alte und neue Version im Vergleich.</h2>
+   <p class="lead">Du lernst die App kurz kennen und suchst dann selbst ein Produkt aus. Niemand wirft dich in eine fertige Situation.</p>
+   <div class="test-grid">
+    <div>
+     <ol class="flow">
+      <li><span><b>App kennenlernen</b><small>Kurze Tour in 7 Schritten, überspringbar</small></span></li>
+      <li><span><b>Code und Version wählen</b><small>Anonymer Code (z. B. T22), alte Version (IST) oder neue (SOLL)</small></span></li>
+      <li><span><b>Aufgabe lösen</b><small>Produkt B finden, in den Warenkorb legen und die Anfrage abschicken</small></span></li>
+      <li><span><b>Kurz bewerten</b><small>Drei Fragen von 1 bis 5, fertig. Danach kannst du die andere Version testen.</small></span></li>
+     </ol>
+     <div class="choice">
+      <a class="js-test" data-pos="wahl-ist" data-v="ist" href="app/index.html">Mit der alten Version starten<small>So läuft es heute (IST)</small></a>
+      <a class="js-test" data-pos="wahl-soll" data-v="soll" href="app/index.html">Mit der neuen Version starten<small>Mein Vorschlag (SOLL)</small></a>
+     </div>
+     <div class="cta-row" style="margin-bottom:0"><a class="btn btn-primary js-test" href="app/index.html" data-pos="klicktest">Klick-Entwurf ausprobieren →</a><button type="button" class="btn btn-ghost" id="share">Seite teilen</button></div>
+     <p id="sharemsg" style="color:var(--muted);font-size:.9rem;margin-top:.5rem" aria-live="polite"></p>
+    </div>
+    <div class="side">
+     <div class="measure">
+      <h3>Was ich beim Test messe</h3>
+      <ul>
+       <li>Welche Knöpfe du klickst und wie lange du pro Bildschirm brauchst</li>
+       <li>Ob am Ende das gewünschte Produkt in der Anfrage steht</li>
+       <li>Deine Antwort auf die Gesundheitsfrage (nur die erfundene Situation)</li>
+       <li>Deine Bewertung von 1 bis 5 und ob du den Ablauf weiterempfehlen würdest (0–10)</li>
+      </ul>
+      <p style="margin-top:.6rem;font-size:.88rem;color:var(--muted)">Ohne Namen, mit anonymem Code. Details in den <a href="teilnahme.html">Teilnahmehinweisen</a>.</p>
+     </div>
+     <form class="form" id="vform" name="vormerken" method="POST" action="danke.html" data-netlify="true" netlify-honeypot="bot-field" novalidate>
+      <input type="hidden" name="form-name" value="vormerken">
+      <p class="hp"><label>Nicht ausfüllen <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
+      <h3 style="font-size:1.15rem">Lieber später testen?</h3>
+      <p style="color:var(--muted);font-size:.92rem;margin-top:-.4rem">Ich schicke dir einen persönlichen Testlink mit Code.</p>
+      <label>E-Mail-Adresse<input type="email" name="email" required autocomplete="email" inputmode="email"></label>
+      <label>Wann passt es dir?<select name="zeitraum"><option value="egal">Egal</option><option value="diese_woche">Diese Woche</option><option value="naechste_woche">Nächste Woche</option></select></label>
+      <label class="check"><input type="checkbox" name="einwilligung" value="ja" required><span>Ich bin mindestens 18 und einverstanden, dass meine E-Mail-Adresse nur für die Einladung zum Test gespeichert wird (<a href="datenschutz.html#vormerken">Datenschutz</a>). Widerruf jederzeit per E-Mail.</span></label>
+      <p class="err" id="verr" hidden></p>
+      <button type="submit" class="btn btn-primary" id="vbtn">Vormerken</button>
+     </form>
+     <div class="ok" id="vok" hidden><b>Danke, du bist vorgemerkt.</b><p style="margin-top:.4rem">Ich melde mich mit deinem Testlink.</p></div>
+    </div>
+   </div>
+  </div>
+ </section>
+
+ <section id="ideen" class="block" data-abschnitt="ideen" style="padding-top:0">
+  <div class="wrap">
+   <div class="ideas-head">
+    <div>
+     <p class="eyebrow">Weitere Ideen</p>
+     <h2>Was CannGo als Nächstes besser machen könnte.</h2>
+     <p class="lead">Jede Idee mit Problem, Lösung und der Zahl, an der ich den Erfolg messen würde. Sag mir mit „Interessiert mich“, was dir wichtig ist.</p>
+    </div>
+    <div class="tabs" role="group" aria-label="Ideen filtern">
+     <button type="button" data-filter="alle" aria-pressed="true">Alle</button>
+     <button type="button" data-filter="rezept" aria-pressed="false">Rezept &amp; Anfrage</button>
+     <button type="button" data-filter="alltag" aria-pressed="false">Alltag &amp; Infos</button>
+     <button type="button" data-filter="zugang" aria-pressed="false">Für alle nutzbar</button>
+    </div>
+   </div>
+   <div class="ideas" id="ideas">
+    <article class="idea" data-gruppe="rezept" data-idee="rezept_erinnerung">
+     <div class="top"><span class="ico">⏰</span><span class="tag med">⚕ Rezept</span></div>
+     <h3>Erinnerung, bevor das Rezept ausläuft</h3>
+     <dl><dt>Problem</dt><dd>„Mein Rezept läuft bald aus“ fällt vielen erst auf, wenn es knapp wird.</dd>
+     <dt>Idee</dt><dd>Hinweis 7 Tage vorher mit direktem Weg in die Folgeanfrage. Das letzte Produkt ist dabei nur grau als „Letztes Mal“ markiert, nicht vorausgewählt.</dd></dl>
+     <p class="kpi"><b>Messgröße:</b> Anteil der Folgeanfragen, die vor Ablauf gestellt werden</p>
+     <div class="vote"><button type="button" aria-pressed="false">👍 Interessiert mich</button><small>Hypothese: weniger Lücken in der Versorgung</small></div>
+    </article>
+    <article class="idea" data-gruppe="rezept" data-idee="status_push">
+     <div class="top"><span class="ico">📍</span><span class="tag med">⚕ Ärztliche Prüfung</span></div>
+     <h3>Status der Prüfung als kurze Nachricht</h3>
+     <dl><dt>Problem</dt><dd>„Ist mein Rezept schon durch?“ Man öffnet die App immer wieder, um nachzusehen.</dd>
+     <dt>Idee</dt><dd>Eine Nachricht pro Schritt: gesendet, in Prüfung, Rezept ausgestellt, Apotheke bereitet vor, unterwegs.</dd></dl>
+     <p class="kpi"><b>Messgröße:</b> weniger Anfragen an den Support zum Status</p>
+     <div class="vote"><button type="button" aria-pressed="false">👍 Interessiert mich</button><small>Hypothese: mehr Vertrauen, weniger Nachfragen</small></div>
+    </article>
+    <article class="idea" data-gruppe="rezept" data-idee="kosten_vorab">
+     <div class="top"><span class="ico">🧾</span><span class="tag">Warenkorb</span></div>
+     <h3>Alle Kosten vor dem ersten Klick</h3>
+     <dl><dt>Problem</dt><dd>Die Prüfgebühr erscheint erst kurz vor dem Absenden. Das wirkt wie eine Überraschung.</dd>
+     <dt>Idee</dt><dd>Gesamtpreis mit Gebühr schon im Warenkorb, dazu ein Satz, wer was abrechnet: Praxis die Prüfung, Apotheke das Produkt.</dd></dl>
+     <p class="kpi"><b>Messgröße:</b> Abbrüche zwischen Warenkorb und Absenden</p>
+     <div class="vote"><button type="button" aria-pressed="false">👍 Interessiert mich</button><small>Im Klick-Entwurf SOLL schon umgesetzt</small></div>
+    </article>
+    <article class="idea" data-gruppe="alltag" data-idee="zonen_alarm">
+     <div class="top"><span class="ico">🛎️</span><span class="tag alt">Aus meinem ersten Entwurf</span></div>
+     <h3>Hinweis bei Konsumverbotszonen</h3>
+     <dl><dt>Problem</dt><dd>Ob man gerade in einer Zone mit Konsumverbot ist, muss man heute selbst auf der Karte nachsehen. Zeitregeln fehlen.</dd>
+     <dt>Idee</dt><dd>Einmal aktivieren, dann ein dezenter Hinweis beim Betreten einer Zone, mit zeitabhängigen Regeln und dem nächsten erlaubten Ort.</dd></dl>
+     <details class="more"><summary>Datenschutz bei dieser Idee</summary><ul><li>Standort wird nur auf dem Gerät verarbeitet</li><li>Nichts verlässt das Handy</li><li>Jederzeit abschaltbar</li></ul></details>
+     <p class="kpi"><b>Messgröße:</b> Aktivierungsrate und Abschaltungen nach 7 Tagen</p>
+     <div class="vote"><button type="button" aria-pressed="false">👍 Interessiert mich</button><small>Rechtslage vorher fachlich prüfen</small></div>
+    </article>
+    <article class="idea" data-gruppe="alltag" data-idee="social_club_finder">
+     <div class="top"><span class="ico">🌿</span><span class="tag alt">Aus meinem ersten Entwurf</span></div>
+     <h3>Social-Club-Finder</h3>
+     <dl><dt>Problem</dt><dd>Anbauvereinigungen in der Nähe zu finden und zu vergleichen ist mühsam: Infos zu Aufnahme, Beitrag und Kontakt sind verstreut.</dd>
+     <dt>Idee</dt><dd>Clubs in der Nähe auf einer Liste und Karte, mit Entfernung, Aufnahmestatus, Beitrag und direktem Kontakt. Filter z. B. „nimmt neue Mitglieder auf“.</dd></dl>
+     <details class="more"><summary>Was ich dabei beachten würde</summary><ul><li>Nur Angaben, die Clubs selbst freigeben</li><li>Standort nur für die Suche, nicht gespeichert</li><li>Nur für Volljährige</li></ul></details>
+     <p class="kpi"><b>Messgröße:</b> Anteil der Suchen, die mit einer Kontaktaufnahme enden</p>
+     <div class="vote"><button type="button" aria-pressed="false">👍 Interessiert mich</button><small>Hypothese: schnellerer Weg zum passenden Club</small></div>
+    </article>
+    <article class="idea" data-gruppe="alltag" data-idee="regeln_klar">
+     <div class="top"><span class="ico">⚖️</span><span class="tag alt">Aus meinem ersten Entwurf</span></div>
+     <h3>Regeln in klarer Sprache</h3>
+     <dl><dt>Problem</dt><dd>Besitzmengen, Unterwegs-Regeln, Fahren: Die Infos sind verstreut und schwer verständlich.</dd>
+     <dt>Idee</dt><dd>Kurze Antworten auf häufige Fragen, mit Stand-Datum und Quelle, ausdrücklich ohne Rechtsberatung.</dd></dl>
+     <p class="kpi"><b>Messgröße:</b> „Hat dir das geholfen?“ Ja-Anteil pro Antwort</p>
+     <div class="vote"><button type="button" aria-pressed="false">👍 Interessiert mich</button><small>Hypothese: weniger Unsicherheit</small></div>
+    </article>
+    <article class="idea" data-gruppe="alltag" data-idee="safer_use">
+     <div class="top"><span class="ico">🧠</span><span class="tag alt">Aus meinem ersten Entwurf</span></div>
+     <h3>Sachliche Infos und Hilfe</h3>
+     <dl><dt>Problem</dt><dd>Infos zu Wirkung und Risiken sind oft entweder belehrend oder unseriös.</dd>
+     <dt>Idee</dt><dd>Sachliche Kurztexte und ein klarer Weg zu Beratungsangeboten wie drugcom.de.</dd></dl>
+     <p class="kpi"><b>Messgröße:</b> Klicks auf Hilfeangebote</p>
+     <div class="vote"><button type="button" aria-pressed="false">👍 Interessiert mich</button><small>Inhalte fachlich prüfen lassen</small></div>
+    </article>
+    <article class="idea" data-gruppe="zugang" data-idee="einfach_modus">
+     <div class="top"><span class="ico" aria-hidden="true">🔍</span><span class="tag">Barrierefreiheit</span></div>
+     <h3>Einfach-Modus: groß, klar, vorlesbar</h3>
+     <dl><dt>Problem</dt><dd>Kleine Schrift, Farbe als einziges Signal und Fachbegriffe schließen Menschen mit Sehschwäche, Farbsehschwäche oder wenig Technik-Erfahrung aus.</dd>
+     <dt>Idee</dt><dd>Ein Schalter für große Schrift und Tasten, hohen Kontrast, Vorlesen jedes Bildschirms und einfache Sprache. Status immer mit Text und Symbol, nie nur mit Farbe.</dd></dl>
+     <p class="kpi"><b>Messgröße:</b> Anteil Folgeanfragen im Einfach-Modus, Abbruchrate im Vergleich</p>
+     <div class="vote"><button type="button" aria-pressed="false">👍 Interessiert mich</button><small>Mit Betroffenen testen</small></div>
+    </article>
+
+    <article class="idea" data-gruppe="zugang" data-idee="sprach_anfrage">
+     <div class="top"><span class="ico" aria-hidden="true">🎙️</span><span class="tag">Barrierefreiheit</span></div>
+     <h3>Folgeanfrage per Sprache oder durch Angehörige</h3>
+     <dl><dt>Problem</dt><dd>Wer wegen Schmerzen, Zittern, Lähmung oder Blindheit kaum tippen kann, scheitert an langen Formularen.</dd>
+     <dt>Idee</dt><dd>„Gleiche Bestellung wie letztes Mal“ per Sprachbefehl, große Ein-Tipp-Bestätigung und ein sicherer Zugang für Angehörige oder Pflegekräfte mit Vollmacht.</dd></dl>
+     <p class="kpi"><b>Messgröße:</b> Zeit bis Anfrage, Anteil ohne Hilfe abgeschlossen</p>
+     <div class="vote"><button type="button" aria-pressed="false">👍 Interessiert mich</button><small>Vollmacht rechtlich prüfen</small></div>
+    </article>
+
+   </div>
+  </div>
+ </section>
+
+ <section id="vorschlag" class="block" data-abschnitt="vorschlag" style="padding-top:0">
+  <div class="wrap suggest">
+   <div class="suggest-copy">
+    <p class="eyebrow">Deine Idee</p>
+    <h2>Was sollte ich als Nächstes verbessern?</h2>
+    <p>Du hast eine konkrete Idee für die Folgeanfrage oder eine andere Stelle? Beschreib sie mir. Ich sammle alle Vorschläge und sortiere sie danach, wie oft und wie dringend sie genannt werden.</p>
+    <p class="hint"><b>Tipp:</b> Beschreib das Problem, deinen Vorschlag und eine Situation, in der dir das geholfen hätte.</p>
+   </div>
+   <div>
+    <form class="form" id="iform" name="verbesserungsvorschlag" method="POST" action="danke.html" data-netlify="true" netlify-honeypot="bot-field" novalidate>
+     <input type="hidden" name="form-name" value="verbesserungsvorschlag">
+     <p class="hp"><label>Nicht ausfüllen <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
+     <label>Kurztitel deiner Idee*<input type="text" name="titel" required maxlength="120" placeholder="z. B. Erinnerung vor Rezeptablauf"></label>
+     <label>Bereich*<select name="bereich" required>
+      <option value="">Bitte wählen …</option>
+      <option>Folgeanfrage / Rezept</option>
+      <option>Gesundheitsfrage</option>
+      <option>Warenkorb &amp; Kosten</option>
+      <option>Status &amp; Benachrichtigungen</option>
+      <option>Hinweise zu Konsumverbotszonen</option>
+      <option>Social-Club-Finder</option>
+      <option>Regeln &amp; Infos</option>
+      <option>Design &amp; Bedienung</option>
+      <option>Barrierefreiheit</option>
+      <option>Klick-Entwurf / Test</option>
+      <option>Sonstiges</option></select></label>
+     <label>Beschreibung*<textarea name="beschreibung" required maxlength="1500" placeholder="Problem, Vorschlag, Situation …"></textarea></label>
+     <fieldset><legend>Wie wichtig ist dir das?</legend><div class="radio-row">
+      <label><input type="radio" name="prioritaet" value="nice-to-have"> Nice to have</label>
+      <label><input type="radio" name="prioritaet" value="wichtig"> Wichtig</label>
+      <label><input type="radio" name="prioritaet" value="unverzichtbar"> Unverzichtbar</label></div></fieldset>
+     <label>E-Mail <span class="opt">(freiwillig, nur für Rückfragen)</span><input type="email" name="email" autocomplete="email" inputmode="email"></label>
+     <label class="check"><input type="checkbox" name="datenschutz" value="ja" required><span>Ich bin mindestens 18 und einverstanden, dass meine Angaben zur Bearbeitung des Vorschlags gespeichert werden (<a href="datenschutz.html#vorschlag">Datenschutz</a>). Bitte keine Gesundheitsdaten eintragen.*</span></label>
+     <p class="err" id="ierr" hidden></p>
+     <button type="submit" class="btn btn-primary" id="ibtn">Vorschlag absenden</button>
+    </form>
+    <div class="ok" id="iok" hidden><b>Danke für deine Idee!</b><p style="margin-top:.4rem">Ich lese jeden Vorschlag. Magst du den <a class="js-test" data-pos="nach-idee" href="app/index.html">Klick-Entwurf</a> auch noch ausprobieren?</p></div>
+   </div>
+  </div>
+ </section>
+
+ <section id="daten" class="block" data-abschnitt="daten" style="padding-top:0">
+  <div class="wrap">
+   <p class="eyebrow">Transparenz</p>
+   <h2>Was diese Seite misst, und warum.</h2>
+   <p class="lead">Ich will lernen, ob die Seite und der Klick-Entwurf verständlich sind. Dafür messe ich das Verhalten auf der Seite, nicht dich als Person.</p>
+   <div class="data-grid">
+    <div class="card"><h3>Immer, ohne Cookies</h3><p>Wie lange ein Abschnitt sichtbar ist, wie weit gescrollt wird, wann der erste Klick kommt und welche Knöpfe geklickt werden. Ohne Namen, nichts wird auf deinem Gerät gespeichert.</p></div>
+    <div class="card"><h3>Nur mit deiner Zustimmung</h3><p>Google Analytics (Statistik) und Microsoft Clarity (Klick- und Scroll-Aufzeichnung). Dabei können Daten in die USA übertragen werden. Ohne Zustimmung werden beide nicht geladen.</p></div>
+    <div class="card"><h3>Nie</h3><p>Keine echten Gesundheitsdaten, kein Verkauf von Daten, keine Werbung. Formulare werden nicht mit deinen Klicks verknüpft.</p></div>
+   </div>
+   <div class="data-actions">
+    <button type="button" class="btn btn-ghost" onclick="CGConsent.open()">Cookie-Einstellungen ändern</button>
+    <a class="btn btn-ghost" href="?debug=1" id="livelink">Messung live ansehen</a>
+    <a class="btn btn-ghost" href="datenschutz.html">Datenschutzerklärung</a>
+   </div>
+  </div>
+ </section>
+</main>
+
+<footer class="footer">
+ <div class="wrap">
+  <div>
+   <a class="logo" href="#top"><span class="logo-mark">C</span>CannGo <small>UX-Konzept</small></a>
+   <p>Lehrprojekt im Kurs Produktmanagement, Franklin Institute, 2026. Keine offizielle Seite von CannGo und nicht mit dem Unternehmen verbunden. Keine medizinische oder rechtliche Beratung. Angebot nur für Volljährige. Hilfe bei problematischem Konsum: <a href="https://www.drugcom.de" rel="noopener">drugcom.de</a></p>
+  </div>
+  <nav aria-label="Rechtliches"><a href="impressum.html">Impressum</a><a href="datenschutz.html">Datenschutz</a><a href="teilnahme.html">Teilnahmehinweise</a><a href="#" onclick="CGConsent.open();return false">Cookie-Einstellungen</a></nav>
+ </div>
+</footer>
+
+<script>
+(function(){
+  'use strict';
+  CG.setScreen('landingpage');
+  CG.track('lp_aufruf', { quelle: CG.S.quelle });
+  var $ = function(id){ return document.getElementById(id); };
+
+  /* ---------- Erste Interaktion und Klicks ---------- */
+  var first = false;
+  function firstAct(art){ if (first) return; first = true; CG.track('lp_erste_interaktion', { art:art, sek:CG.sek() }); }
+  window.addEventListener('scroll', function(){ firstAct('scroll'); }, { passive:true, once:true });
+  document.addEventListener('pointerdown', function(e){ if (e.target.closest('.cgc')) return; var a = e.target.closest('a,button,input,select,textarea,summary'); firstAct(a ? 'klick' : 'tippen'); }, { capture:true });
+  document.addEventListener('keydown', function(e){ if (!e.target.closest || !e.target.closest('.cgc')) firstAct('tastatur'); });
+
+  /* ---------- Scrolltiefe ---------- */
+  var max = 0, marks = {25:0,50:0,75:0,100:0};
+  function depth(){
+    var h = document.documentElement, total = h.scrollHeight - h.clientHeight;
+    var pct = total > 0 ? Math.round((h.scrollTop || document.body.scrollTop) / total * 100) : 100;
+    if (pct > max) max = pct;
+    [25,50,75,100].forEach(function(m){ if (pct >= m && !marks[m]) { marks[m] = 1; CG.track('lp_scroll', { prozent:m, sek:CG.sek() }); } });
+  }
+  window.addEventListener('scroll', depth, { passive:true });
+
+  /* ---------- Lesezeit pro Abschnitt ----------
+     Alle 0,5 s: Abschnitt gilt als gelesen, wenn er mind. 35 % des Bildschirms füllt
+     oder zu mind. 60 % sichtbar ist, und der Tab im Vordergrund ist. */
+  var secs = [].slice.call(document.querySelectorAll('[data-abschnitt]'));
+  var seen = {}, reached = {};
+  setInterval(function(){
+    if (document.visibilityState !== 'visible') return;
+    var vh = window.innerHeight;
+    secs.forEach(function(s){
+      var r = s.getBoundingClientRect(), ov = Math.max(0, Math.min(r.bottom, vh) - Math.max(r.top, 0));
+      if (ov / vh >= 0.35 || (r.height > 0 && ov / r.height >= 0.6)) {
+        var k = s.getAttribute('data-abschnitt');
+        seen[k] = (seen[k] || 0) + 0.5;
+        if (!reached[k] && seen[k] >= 1) { reached[k] = 1; CG.track('lp_abschnitt_erreicht', { abschnitt:k, sek:CG.sek() }); }
+      }
+    });
+  }, 500);
+
+  /* ---------- Zusammenfassung beim Verlassen oder beim Wechsel in den Test ---------- */
+  var summarized = false;
+  function summary(grund){
+    if (summarized) return; summarized = true;
+    Object.keys(seen).forEach(function(k){ CG.track('lp_abschnitt', { abschnitt:k, sek_sichtbar:+seen[k].toFixed(1) }); });
+    CG.track('lp_scroll_max', { prozent:max });
+    CG.track('lp_verlassen', { grund:grund, sek:CG.sek(), scroll_max:max, abschnitte:Object.keys(seen).filter(function(k){ return seen[k] >= 3; }).length });
+  }
+  window.addEventListener('pagehide', function(){ summary('seite_verlassen'); }, { capture:true });
+
+  /* ---------- Navigation ---------- */
+  document.querySelectorAll('[data-nav]').forEach(function(a){
+    a.addEventListener('click', function(){ CG.track('lp_nav_klick', { ziel:a.getAttribute('data-nav') }); });
+  });
+
+  /* ---------- Knöpfe in den Klicktest ---------- */
+  function testLink(a){
+    var extra = { quelle:'landingpage', pos:a.getAttribute('data-pos') || '' };
+    if (a.getAttribute('data-v')) extra.v = a.getAttribute('data-v');
+    return CG.link('app/index.html', extra);
+  }
+  document.querySelectorAll('.js-test').forEach(function(a){
+    a.href = testLink(a);
+    a.addEventListener('click', function(){
+      CG.track('lp_cta_klick', { sek:CG.sek(), position:a.getAttribute('data-pos') || '', variante:a.getAttribute('data-v') || '' });
+      summary('klicktest');
+      CG.setScreen('');
+      CG.flush();
+      a.href = testLink(a);
+    });
+  });
+  var sh = $('share'); if (sh) sh.addEventListener('click', function(){
+    var u = new URL('index.html', location.href); u.search = '?quelle=empfehlung';
+    CG.track('teilen_klick', { ort:'landingpage' }); CG.flush();
+    var m = $('sharemsg');
+    try { navigator.clipboard.writeText(u.href).then(function(){ m.textContent = 'Link kopiert. Danke fürs Weitersagen!'; }, function(){ m.textContent = u.href; }); } catch(_) { m.textContent = u.href; }
+  });
+  var live = $('livelink'); if (live) live.href = CG.link('index.html', { debug:'1' });
+
+  /* ---------- Ideen: Filter und "Interessiert mich" ---------- */
+  document.querySelectorAll('.tabs button').forEach(function(b){
+    b.addEventListener('click', function(){
+      var f = b.getAttribute('data-filter');
+      document.querySelectorAll('.tabs button').forEach(function(x){ x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+      document.querySelectorAll('.idea').forEach(function(i){ i.hidden = !(f === 'alle' || i.getAttribute('data-gruppe') === f); });
+      CG.track('lp_ideen_filter', { filter:f });
+    });
+  });
+  document.querySelectorAll('.idea').forEach(function(card){
+    var b = card.querySelector('.vote button'), id = card.getAttribute('data-idee');
+    var ttl = (card.querySelector('h3')||{}).textContent || '';
+    var lab = function(){ b.setAttribute('aria-label', (b.getAttribute('aria-pressed')==='true' ? 'Gemerkt: ' : 'Interessiert mich: ') + ttl); };
+    lab(); b.addEventListener('click', function(){ setTimeout(lab, 0); });
+    b.addEventListener('click', function(){
+      var on = b.getAttribute('aria-pressed') !== 'true';
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+      b.textContent = on ? '✓ Gemerkt' : '👍 Interessiert mich';
+      CG.track(on ? 'lp_idee_interesse' : 'lp_idee_interesse_weg', { idee:id });
+    });
+    var d = card.querySelector('details'); if (d) d.addEventListener('toggle', function(){ if (d.open) CG.track('lp_idee_details', { idee:id }); });
+  });
+
+  /* ---------- Formulare (gemessen wird nur DASS, nie WAS eingetragen wird) ---------- */
+  function wire(formId, errId, okId, btnId, name, check, extra){
+    var f = $(formId), started = false;
+    f.addEventListener('focusin', function(){ if (!started) { started = true; CG.track('lp_formular_start', { formular:name, sek:CG.sek() }); } });
+    f.addEventListener('submit', function(ev){
+      ev.preventDefault();
+      var err = $(errId), btn = $(btnId), msg = check(f);
+      if (msg) { err.textContent = msg; err.hidden = false; CG.track('lp_formular_pruefung', { formular:name }); return; }
+      err.hidden = true; btn.disabled = true;
+      function done(){
+        CG.track('lp_formular_gesendet', Object.assign({ formular:name, sek:CG.sek() }, extra(f)));
+        CG.flush();
+        f.hidden = true; $(okId).hidden = false;
+        $(okId).querySelectorAll('.js-test').forEach(function(a){ a.href = testLink(a); });
+      }
+      if (!CG.online()) { done(); return; } // Vorschau: nur Danke zeigen
+      var fields = {}; new FormData(f).forEach(function(v, k){ if (k !== 'form-name') fields[k] = String(v).slice(0, 1500); });
+      if (fields['bot-field']) { done(); return; }
+      CG.sendForm(f.getAttribute('name'), fields)
+        .then(function(){ done(); })
+        .catch(function(){ btn.disabled = false; err.textContent = 'Das hat nicht geklappt. Bitte versuch es noch einmal.'; err.hidden = false; CG.track('lp_formular_fehler', { formular:name }); });
+    });
+  }
+  var mailOk = function(v){ return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v); };
+  wire('vform','verr','vok','vbtn','vormerken', function(f){
+    if (!mailOk(f.email.value.trim())) return 'Bitte gib eine gültige E-Mail-Adresse ein.';
+    if (!f.einwilligung.checked) return 'Bitte bestätige die Einwilligung.';
+  }, function(f){ return { zeitraum:f.zeitraum.value }; });
+  wire('iform','ierr','iok','ibtn','idee', function(f){
+    if (!f.titel.value.trim()) return 'Bitte gib deiner Idee einen kurzen Titel.';
+    if (!f.bereich.value) return 'Bitte wähle einen Bereich.';
+    if (!f.beschreibung.value.trim()) return 'Bitte beschreib deine Idee kurz.';
+    if (f.email.value.trim() && !mailOk(f.email.value.trim())) return 'Die E-Mail-Adresse sieht nicht vollständig aus.';
+    if (!f.datenschutz.checked) return 'Bitte bestätige die Einwilligung.';
+  }, function(f){ var p = f.querySelector('input[name=prioritaet]:checked'); return { bereich:f.bereich.value, prioritaet:p ? p.value : '' }; });
+})();
+</script>
+</body>
+</html>

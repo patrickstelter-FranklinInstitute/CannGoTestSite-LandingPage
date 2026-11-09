@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="de" data-seite="app" data-root="../">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>CannGo Klick-Entwurf V4</title>
+<script src="../assets/messkonzept.js"></script>
+<script src="../assets/track.js"></script>
+<script src="../assets/consent.js"></script>
+<style>
+/* Farblogik V4: Grün = Aktion/Erfolg (dunkle Schrift auf hellem Grün, nie Grün auf Grün),
+   Blau + ⚕ = alles Ärztliche, Orange = Achtung, Grau = Vergangenes. Kontraste ≥ 4,5:1. */
+:root{
+  --page:#0b1217; --phone:#141c25; --card:#1e2933; --card2:#18222b; --line:#3d4b56; --text:#eef3f6; --muted:#aab8c1;
+  --act:#0f7d4c; --act-ink:#ffffff; --act-line:#3fd98f;
+  --med:#7fb4ff; --med-bg:#13253f; --med-line:#4f86d9; --med-ink:#e3eeff;
+  --warn:#f0a35e; --warn-bg:#3a2a18; --warn-ink:#ffe2c0;
+  --past-bg:#2c3740; --past-ink:#dde4e8;
+  --info-bg:#1d2b36; --info-line:#4d6475;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--page);color:var(--text);font:15px/1.5 Arial,Helvetica,sans-serif}
+button,input,select,textarea{font:inherit}button{cursor:pointer}
+:focus-visible{outline:3px solid #f8d048;outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+.sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.gross{font:inherit;font-weight:700;background:#fff;color:#0b3d27;border:2px solid #fff;border-radius:999px;padding:4px 12px;cursor:pointer;min-height:32px}
+.gross[aria-pressed=true]{background:#0b3d27;color:#fff}
+html.gross-an main.phone{zoom:1.3}
+.bar{background:var(--act);color:var(--act-ink);font-weight:bold;padding:10px max(16px,env(safe-area-inset-left,0px));display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.wrap{max-width:1060px;margin:0 auto;padding:18px max(16px,env(safe-area-inset-left,0px)) 40px}
+.layout{display:grid;grid-template-columns:minmax(0,430px) minmax(0,1fr);gap:22px;align-items:start}
+.phone{background:var(--phone);border:1px solid var(--line);border-radius:22px;overflow:hidden;box-shadow:0 15px 45px #0007;min-width:0}
+.head{display:grid;grid-template-columns:44px 1fr 44px;align-items:center;padding:14px 12px;border-bottom:1px solid #2f3b45}
+.head .logo{text-align:center;font-size:24px;letter-spacing:1.8px;font-weight:900;color:#d9f7b9}.logo em{font-weight:300;font-style:normal}
+.back{background:none;border:0;color:var(--text);font-size:26px;line-height:1;padding:4px 8px;border-radius:8px}
+.back[hidden]{display:none}
+.tag{background:#22303a;padding:8px 15px;color:#dbe6ec;font-weight:bold;font-size:12px;display:flex;justify-content:space-between;gap:8px}
+.screen{padding:18px 18px 22px;min-height:470px}
+.screen h1{font-size:22px;line-height:1.25;margin:4px 0 12px}
+.screen p{color:#c9d4da;margin:0 0 12px}
+.kicker{font-size:12px;color:#c6d9e3;letter-spacing:.6px;text-transform:uppercase;font-weight:700}
+.kicker.med{color:var(--med)}
+.card{border:1px solid var(--line);background:var(--card);border-radius:12px;padding:14px;margin:11px 0}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.line{border-top:1px solid #34424c;margin:11px 0}
+.muted{font-size:13px;color:var(--muted)}
+.fine{font-size:12.5px;color:var(--muted)}
+.btn{display:block;width:100%;border:0;background:var(--act);color:var(--act-ink);border-radius:10px;font-weight:800;padding:14px 12px;margin-top:11px;text-align:center;text-decoration:none}
+.btn:disabled{background:#3b4a53;color:#b7c4cb;cursor:not-allowed}
+.btn.sec{background:transparent;border:2px solid #8fa2ad;color:var(--text)}
+.btn.med{background:#2a66c9;color:#ffffff}
+.link{background:none;border:0;color:#9fd2ff;text-decoration:underline;font-weight:700;padding:4px 0}
+.pill{border-radius:99px;padding:3px 10px;font-size:11px;font-weight:800;white-space:nowrap}
+.pill.new{background:var(--act);color:var(--act-ink)}
+.pill.past{background:var(--past-bg);color:var(--past-ink)}
+.pill.warn{background:var(--warn-bg);color:var(--warn-ink);border:1px solid var(--warn)}
+.pill.med{background:var(--med-bg);color:var(--med-ink);border:1px solid var(--med-line)}
+.pill.new::before{content:"✓ "}.pill.warn::before{content:"⚠ "}
+.option{width:100%;border:1px solid #51616d;border-radius:12px;background:var(--card2);color:var(--text);text-align:left;padding:13px;margin:9px 0;display:flex;gap:12px;align-items:center}
+.option .txt{flex:1;min-width:0}.option strong{display:block}.option small{display:block;color:var(--muted);margin-top:3px}
+.option .chk{width:24px;height:24px;border-radius:50%;border:2px solid #7d8d97;flex:none;display:grid;place-items:center;font-size:14px;font-weight:900;color:transparent}
+.option.med{border-color:var(--med-line)}
+.option.sel{border:2px solid var(--act-line);padding:12px}
+.option.sel .chk{background:var(--act);border-color:var(--act);color:var(--act-ink)}
+.notice{border:1px solid var(--info-line);background:var(--info-bg);padding:11px 12px;border-radius:10px;margin:12px 0;font-size:14px}
+.notice.warn{background:var(--warn-bg);border-color:var(--warn);color:var(--warn-ink)}
+.medbox{border:1px solid var(--med-line);background:var(--med-bg);color:var(--med-ink);border-radius:12px;padding:12px;margin:11px 0}
+.medlbl{display:inline-flex;gap:6px;align-items:center;font-size:11px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--med)}
+.prod{display:flex;gap:12px;align-items:center}
+.thumb{width:46px;height:48px;flex:none;background:#2b3b45;border:1px solid #4a5d69;border-radius:9px;display:grid;place-items:center;color:#d9f7b9;font-size:20px}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:12px;color:var(--text);padding:14px 12px;text-align:left;font-weight:700;display:flex;flex-direction:column;gap:6px}
+.tile span{font-size:21px;color:#d9f7b9}.tile.med span{color:var(--med)}.tile.med{border-color:var(--med-line)}
+.tabbar[hidden]{display:none}.tabbar{display:flex;border-top:1px solid #2f3b45;background:#10171e}
+.tabbar button{flex:1;background:none;border:0;color:#93a5af;padding:9px 2px 11px;font-size:11px;display:flex;flex-direction:column;align-items:center;gap:2px}
+.tabbar button span{font-size:18px}.tabbar button.on{color:#ffffff;font-weight:bold;box-shadow:inset 0 3px 0 var(--act)}
+.search{display:block;width:100%;font:inherit;background:var(--card2);border:1px solid #51616d;border-radius:10px;padding:11px;color:var(--text)}.search::placeholder{color:#aab8c1}.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.tl{list-style:none;margin:0;padding:0}.tl li{position:relative;padding:7px 0 7px 28px;color:var(--muted)}
+.tl li:before{content:"";position:absolute;left:4px;top:11px;width:12px;height:12px;border-radius:50%;border:2px solid #6b7c88}
+.tl li.done{color:var(--text)}.tl li.done:before{background:var(--act);border-color:var(--act)}
+.tl li.now{color:var(--med);font-weight:bold}.tl li.now:before{border-color:var(--med);background:var(--med-bg)}
+.check{display:flex;gap:10px;align-items:flex-start;margin:12px 0}.check input{width:22px;height:22px;flex:none;margin-top:1px;accent-color:#22c27a}
+.q{margin:12px 0;border-bottom:1px solid #34424c;padding-bottom:12px}
+.q>label,.q>strong{display:block;margin:0 0 7px;font-weight:700}
+.scale{display:flex;gap:6px;flex-wrap:wrap}.scale label{display:flex;gap:4px;align-items:center;background:#263441;border:1px solid #4b5b66;padding:8px 11px;border-radius:8px;cursor:pointer}
+.scale input{accent-color:#22c27a}
+.q select,.q textarea,.q input[type=text]{width:100%;border-radius:9px;border:1px solid #617380;background:#1a2731;color:#fff;padding:10px}
+.err{color:var(--warn-ink);font-size:13px;min-height:1em}
+.panel{background:#17222c;border:1px solid #3c4b56;border-radius:16px;padding:18px;min-width:0}
+.panel h2{margin:0 0 8px;font-size:19px}.panel p,.panel li{color:#cfd9df}
+.legend{display:grid;gap:7px;margin-top:10px;font-size:14px}
+.legend div{display:flex;gap:8px;align-items:center}
+.sw{width:22px;height:16px;border-radius:4px;flex:none}
+.dots{display:flex;gap:8px;margin:12px 0 4px}.dots span{width:11px;height:11px;border-radius:50%;background:#3d5159}.dots span.on{background:var(--act)}
+textarea.json{width:100%;height:120px;font:11px/1.35 ui-monospace,Menlo,monospace;background:#101820;color:#d6e4dd;border:1px solid #445;border-radius:8px;padding:8px}
+.foot{margin-top:26px;font-size:13px;color:#9fb0ba}.foot nav{display:flex;flex-wrap:wrap;gap:6px 16px;margin-bottom:6px}.foot a{color:#c6d4dc}
+.sr{position:absolute;left:-9999px}
+@media(max-width:820px){.layout{grid-template-columns:1fr}.panel{order:-1}}
+.simnote{border:1px dashed var(--past,#8a9a92);border-radius:10px;padding:8px 12px;font-size:13px;margin:0 0 12px;opacity:.95}
+</style>
+</head>
+<body>
+<div class="bar" role="region" aria-label="Hinweis zum Lehrprojekt"><span>CannGo · Klick-Entwurf V4</span><span>Lehrprojekt · keine offizielle CannGo-Seite · keine medizinische Beratung · fiktive Testprodukte</span><button type="button" id="gross" class="gross" aria-pressed="false">A+ Größere Schrift</button></div>
+<div class="wrap">
+ <div class="layout">
+  <p id="ansage" class="sr" aria-live="polite"></p>
+  <main class="phone" aria-label="App-Simulation">
+   <div class="head"><button class="back" id="back" aria-label="Zurück" hidden>‹</button><span class="logo">CANN<em>GO</em></span><span></span></div>
+   <div class="tag" id="tag"></div>
+   <div class="screen" id="view"></div>
+   <nav class="tabbar" id="tabbar" hidden></nav>
+  </main>
+  <aside class="panel" id="panel"></aside>
+ </div>
+ <footer class="foot"><nav><a href="../index.html">Startseite</a><a href="../impressum.html">Impressum</a><a href="../datenschutz.html">Datenschutz</a><a href="../teilnahme.html">Teilnahmehinweise</a><a href="../agb-demo.html">Demo-AGB</a><a href="#" onclick="CGConsent.open();return false">Cookie-Einstellungen</a></nav>
+ Lehrprojekt im Kurs Produktmanagement, Franklin Institute, 2026. Keine medizinische Beratung.</footer>
+</div>
+<form name="messung" data-netlify="true" netlify-honeypot="bot-field" hidden><input name="payload"><input name="bot-field"></form>
+
+<script>
+(function(){
+'use strict';
+var $=function(id){return document.getElementById(id)};
+var esc=function(x){return String(x==null?'':x).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
+var qs=new URLSearchParams(location.search);
+var PROD={A:{id:'A',name:'Testprodukt A',sorte:'Waldmeister',qty:'10 g',gp:'6,20 € / g',av:'verfügbar'},B:{id:'B',name:'Testprodukt B',sorte:'Lindenblüte',qty:'5 g',gp:'6,75 € / g',av:'verfügbar'},C:{id:'C',name:'Testprodukt C',sorte:'Bergamotte',qty:'5 g',gp:'7,50 € / g',av:'wenig Bestand'},D:{id:'D',name:'Testprodukt D',sorte:'Salbei',qty:'10 g',gp:'5,90 € / g',av:'verfügbar'},E:{id:'E',name:'Testprodukt E',sorte:'Zeder',qty:'5 g',gp:'8,10 € / g',av:'verfügbar'},F:{id:'F',name:'Testprodukt F',sorte:'Holunder',qty:'15 g',gp:'5,40 € / g',av:'wenig Bestand'}};
+var PROD_IDS=['C','E','A','F','B','D']; // bewusst gemischt: B steht nicht oben
+var FEE='14,99 €';
+var st={screen:'start',tourAt:0,phase:'tour',variante:(qs.get('v')||'').toLowerCase(),reihenfolge:qs.get('o')||'',code:CG.S.code,
+  cart:null,pick:null,health:null,firstHealth:null,request:null,agb:false,zurueck:0,aendern:0,t0:null,err:'',hist:[],agbOpen:false,survey:null};
+
+/* ---------- Hilfen ---------- */
+var prod=function(p){return '<div class="prod"><div class="thumb">▤</div><div><strong>'+esc(p.name)+'</strong><div class="muted">'+(p.sorte?'Sorte '+esc(p.sorte)+' · ':'')+p.qty+' · '+p.gp+'</div></div></div>'};
+var med=function(t){return '<span class="medlbl">⚕ '+(t||'Ärztlich')+'</span>'};
+function go(screen,opts){opts=opts||{};if(!opts.noHist&&st.screen!==screen)st.hist.push(st.screen);st.screen=screen;st.err='';CG.setScreen(screen);window.scrollTo(0,0);render();sagAn()}
+function sagAn(){try{var m=document.querySelector('main.phone');var h=m&&m.querySelector('h1,h2,h3');var a=document.getElementById('ansage');if(a)a.textContent=h?('Neuer Bildschirm: '+h.textContent.trim()):'';if(h){h.setAttribute('tabindex','-1');h.focus({preventScroll:true})}}catch(_){}}
+function back(){if(!st.hist.length)return;st.zurueck++;CG.track('zurueck_klick',{von:st.screen});var prev=st.hist.pop();st.screen=prev;CG.setScreen(prev);render();sagAn()}
+var ist=function(){return st.variante==='ist'};
+
+/* ---------- Tour: App kennenlernen ---------- */
+var TOUR=[
+ {k:'Start',t:'Hallo! Was möchtest du heute erledigen?',tab:'start',body:function(){return tiles(false)},
+  what:'CannGo bündelt drei Schritte: <b>Produkt aussuchen</b>, <b>ärztliche Prüfung online anfragen</b> und das Produkt über eine <b>Partner-Apotheke</b> bekommen.',day:'„Mein Rezept läuft bald aus. Ich will ohne Wartezimmer eine neue Anfrage stellen.“'},
+ {k:'Produkte',t:'Produkte entdecken',tab:'produkte',body:function(){return productList(false)},
+  what:'Suchen, filtern, <b>Preis pro Gramm</b> vergleichen und sehen, was <b>verfügbar</b> ist.',day:'„Ich will eine andere Sorte probieren und vorher wissen, was sie kostet.“'},
+ {k:'Apotheke',t:'Apotheke wählen',tab:'produkte',body:function(){return [['Grüne Apotheke','beide Produkte vorrätig · Lieferung','passt','new'],['Stadt-Apotheke','1 von 2 vorrätig','teilweise','warn'],['Apotheke am Markt','Abholung möglich','passt','new']].map(function(a){return '<div class="card"><div class="row"><strong>'+a[0]+'</strong><span class="pill '+a[3]+'">'+a[2]+'</span></div><div class="muted" style="margin-top:6px">'+a[1]+'</div></div>'}).join('')},
+  what:'Die Apotheke bestimmt, was <b>gemeinsam verfügbar</b> ist und ob geliefert oder abgeholt wird.',day:'„Ich will alles bei einer Apotheke bekommen.“'},
+ {k:'Warenkorb',t:'Warenkorb / Rezeptwunsch',tab:'warenkorb',body:function(){return '<div class="card"><div class="row"><b>Ausgewählt</b><span class="pill new">Neu</span></div><div class="line"></div>'+prod(PROD.B)+'</div><p class="fine">Der Warenkorb ist ein Wunsch. Ob und was verschrieben wird, entscheidet die Ärztin oder der Arzt.</p>'},
+  what:'Der Warenkorb ist dein <b>Rezeptwunsch</b>: Das möchtest du gern bekommen.',day:'„Diesmal soll es ein anderes Produkt sein.“'},
+ {k:'Ärztliche Prüfung',t:'Rezept anfragen',tab:'warenkorb',med:true,body:function(){return '<div class="medbox">'+med()+'<div style="margin-top:6px">Alles mit diesem Zeichen hat mit der <b>ärztlichen Prüfung</b> zu tun.</div></div>'+[['⚕ Online-Anfrage','Fragebogen, Prüfung online',FEE],['⚕ Videosprechstunde','Gespräch per Video','je nach Praxis'],['⚕ Termin vor Ort','in einer Partnerpraxis','je nach Praxis']].map(function(o){return '<div class="option med"><span class="chk">✓</span><span class="txt"><strong>'+o[0]+'</strong><small>'+o[1]+'</small></span><span class="pill med">'+o[2]+'</span></div>'}).join('')},
+  what:'Hier wählst du, <b>wie</b> du ärztlich geprüft werden willst. In dieser Demo ist alles Ärztliche <b style="color:var(--med)">blau</b> markiert.',day:'„Ich will schnell eine Folgeanfrage stellen.“'},
+ {k:'Anfragen',t:'Meine Anfragen',tab:'status',body:function(){return statusCard('Anfrage vom 04.11.')},
+  what:'Der Status zeigt Schritt für Schritt, <b>wo deine Anfrage steht</b> und wer als Nächstes dran ist.',day:'„Ist mein Rezept schon durch?“'},
+ {k:'Hilfe',t:'Hilfe & Chat',tab:'hilfe',body:function(){return ['Was kostet eine Anfrage?','Wie lange dauert die ärztliche Prüfung?','Kann ich mein Produkt nachträglich ändern?'].map(function(q){return '<div class="card row">'+q+'<span>›</span></div>'}).join('')},
+  what:'Antworten auf häufige Fragen und ein Chat, wenn du nicht weiterkommst.',day:'„Ich habe mich vertan und will mein Produkt ändern.“'}
+];
+function tiles(active){var t=[['produkte','⌕','Produkte finden',0],['apotheke','✚','Apotheke wählen',0],['warenkorb','▤','Mein Warenkorb',0],['anfrage','⚕','Rezept anfragen',1],['status','◷','Meine Anfragen',0],['hilfe','?','Hilfe & Chat',0]];
+ return '<div class="tiles">'+t.map(function(x){return '<button class="tile'+(x[3]?' med':'')+'" '+(active?'data-act="tile-'+x[0]+'"':'data-tour="'+x[0]+'"')+'><span aria-hidden="true">'+x[1]+'</span>'+x[2]+'</button>'}).join('')+'</div>'+
+ '<div class="card"><div class="row"><b>Deine letzte Anfrage</b><span class="pill past">abgeschlossen</span></div><div class="muted" style="margin-top:6px">Testprodukt A · 10 g</div></div>'}
+function productCards(active){var q=(st.q||'').trim().toLowerCase();var ids=PROD_IDS.filter(function(id){var p=PROD[id];return !q||(p.name+' '+p.sorte+' '+id).toLowerCase().indexOf(q)>=0});
+ if(!ids.length)return '<p class="muted">Kein Produkt gefunden. Versuch es mit einem anderen Begriff.</p>';
+ return ids.map(function(id){var p=PROD[id];var inCart=st.cart===id;
+ return '<div class="card"><div class="row">'+prod(p)+'<span class="pill '+(p.av==='verfügbar'?'new':'warn')+'">'+p.av+'</span></div>'+(id==='A'?'<div style="margin-top:8px"><span class="pill past">↺ Letztes Mal bestellt</span></div>':'')+(active?'<button class="btn '+(inCart?'sec':'')+'" data-act="add-'+id+'">'+(inCart?'Im Warenkorb ✓':'In den Warenkorb')+'</button>':'')+'</div>'}).join('')}
+function productList(active){return (active?'<label class="sr" for="prodq">Produkt oder Sorte suchen</label><input id="prodq" class="search" type="search" placeholder="⌕ Produkt oder Sorte suchen" autocomplete="off" value="'+esc(st.q||'')+'">':'<div class="search">⌕ Produkt oder Sorte suchen</div>')+'<div id="plist">'+productCards(active)+'</div>'}
+function statusCard(t){return '<div class="card"><div class="row"><b>'+t+'</b><span class="pill med">⚕ in Prüfung</span></div><div class="line"></div><ol class="tl"><li class="done">Anfrage gesendet</li><li class="now">Ärztliche Prüfung</li><li>Rezept ausgestellt</li><li>Apotheke bereitet vor</li><li>Versand oder Abholung</li></ol></div>'}
+
+/* ---------- Bildschirme ---------- */
+var scenario='<p><b>Deine Situation:</b> Du hast über CannGo schon einmal <b>Testprodukt A</b> bekommen. Gesundheitlich ist alles <b>wie vorher</b>. Diesmal möchtest du <b>Testprodukt B</b> ausprobieren.</p><p><b>Deine Aufgabe:</b> Such Produkt B, leg es in den Warenkorb und schick die Anfrage ab, so wie du es in echt tun würdest. Denk gern laut.</p>';
+function view(){var s=st.screen;
+ if(s==='start')return '<div class="kicker">Willkommen</div><h1>Lern die App in 7 kurzen Schritten kennen</h1><p>Danach testest du eine Folgeanfrage. Alles ist eine Simulation mit fiktiven Produkten.</p>'+tiles(false)+'<button class="btn" data-act="tour-start">Tour starten</button><button class="btn sec" data-act="tour-skip">Tour überspringen, direkt zum Test</button>';
+ if(s==='tour'){var T=TOUR[st.tourAt];return '<div class="kicker'+(T.med?' med':'')+'">'+(T.med?'⚕ ':'')+T.k+' · '+(st.tourAt+1)+' von '+TOUR.length+'</div><h1>'+T.t+'</h1>'+T.body()}
+ if(s==='anmeldung')return '<div class="kicker">Test · Anmeldung</div><h1>Bevor es losgeht</h1>'+
+  '<div class="q"><label for="code">Dein Testcode, z. B. T21</label><input type="text" id="code" maxlength="16" value="'+esc(st.code)+'" autocomplete="off"></div>'+
+  '<div class="q"><label for="var">Welche Variante sollst du testen?</label><select id="var"><option value="">Bitte wählen</option><option value="ist"'+(st.variante==='ist'?' selected':'')+'>IST (bisheriger Ablauf)</option><option value="soll"'+(st.variante==='soll'?' selected':'')+'>SOLL (neuer Ablauf)</option></select></div>'+
+  '<div class="q"><label for="ord">Dein wievielter Test heute?</label><select id="ord"><option value="">Bitte wählen</option><option value="erster"'+(st.reihenfolge==='erster'?' selected':'')+'>erster</option><option value="zweiter"'+(st.reihenfolge==='zweiter'?' selected':'')+'>zweiter</option><option value="nur_einer"'+(st.reihenfolge==='nur_einer'?' selected':'')+'>ich mache nur einen</option></select></div>'+
+  '<div class="check"><input type="checkbox" id="ok"><label for="ok">Ich bin mindestens 18, mache freiwillig mit und habe die <a href="../teilnahme.html" style="color:#9fd2ff">Teilnahmehinweise</a> gelesen. Ich gebe keine echten Gesundheitsdaten ein.</label></div>'+
+  '<div class="err">'+esc(st.err)+'</div><button class="btn" data-act="anmelden">Weiter zur Aufgabe</button>';
+ if(s==='aufgabe')return '<div class="kicker">Deine Aufgabe</div><h1>So geht es los</h1>'+scenario+'<button class="btn" data-act="test-start">Los geht’s</button>';
+ if(s==='home')return '<div class="kicker">Start</div><h1>Hallo! Was möchtest du heute erledigen?</h1>'+tiles(true);
+ if(s==='produkte')return '<div class="kicker">Produkte</div><h1>Produkte entdecken</h1>'+productList(true)+(st.cart?'<button class="btn" data-act="to-cart">Zum Warenkorb</button>':'');
+ if(s==='nicht_test')return '<div class="kicker">Hinweis</div><h1>Das brauchst du für diese Aufgabe nicht</h1><p>Dieser Bereich ist in der Demo nicht ausgebaut. Geh zurück und such Produkt B.</p><button class="btn sec" data-act="home">Zur Startseite der App</button>';
+ if(s==='warenkorb'){if(!st.cart)return '<div class="kicker">Warenkorb</div><h1>Dein Warenkorb ist leer</h1><button class="btn" data-act="tile-produkte">Produkte finden</button>';
+  var p=PROD[st.cart];var fees=!ist();
+  return '<div class="kicker">Warenkorb</div><h1>Warenkorb / Rezeptwunsch</h1><div class="card"><div class="row"><b>Ausgewählt</b><span class="pill new">Neu</span></div><div class="line"></div>'+prod(p)+'<div class="line"></div>'+
+  '<div class="row"><span>Medikation (geschätzt)</span><b>33,75 €</b></div>'+
+  (fees?'<div class="row" style="margin-top:6px;color:var(--med)"><span>⚕ Ärztliche Prüfung (Online-Anfrage)</span><b>'+FEE+'</b></div><div class="line"></div><div class="row"><b>Gesamt (geschätzt)</b><b style="font-size:19px">48,74 €</b></div>':'')+
+  '</div>'+(fees?'<p class="fine">Die Medikation rechnet die Apotheke ab, die ärztliche Prüfung die Praxis.</p>':'')+'<button class="btn med" data-act="to-konto">⚕ Rezept anfragen</button>'}
+ if(s==='konto')return '<div class="kicker">Anmeldung</div><h1>Möchtest du fortfahren?</h1><div class="card">Du bist angemeldet (Testkonto).</div><button class="btn" data-act="konto-ok">Ja, weiter</button>';
+ /* IST */
+ if(s==='ist_gesundheit')return '<div class="kicker med">⚕ Behandlungsanfrage</div><h1>Hat sich etwas an deinem Gesundheitszustand geändert?</h1>'+'<p class="simnote">Test-Hinweis: Antworte nur für die erfundene Situation aus der Aufgabe, nicht für dich selbst.</p>'+'<p class="fine">Falls sich etwas an deinem Gesundheitszustand geändert hat oder du eine andere Medikation anfragen möchtest, klicke auf „Ja, bearbeiten“.</p><button class="btn sec" data-act="ist-ja">Ja, bearbeiten</button><button class="btn" data-act="ist-nein">Nein</button>';
+ if(s==='ist_bearbeiten')return '<div class="kicker">Angaben bearbeiten</div><h1>Deine bisherigen Angaben</h1><div class="card"><span class="muted">Bisherige Verordnung</span><div class="line"></div>'+prod(PROD.A)+'</div><div class="card"><span class="muted">Im Warenkorb</span><div class="line"></div>'+prod(PROD[st.cart])+'</div><button class="btn" data-act="ist-take">Warenkorb übernehmen</button><button class="btn sec" data-act="ist-keep">Angaben unverändert lassen</button>';
+ if(s==='ist_anfrageart')return '<div class="kicker med">⚕ Behandlungsanfrage</div><h1>Anfrageart</h1><div class="option sel"><span class="chk">✓</span><span class="txt"><strong>Online-Anfrage</strong><small>Ärztliche Prüfung</small></span><span class="pill med">'+FEE+'</span></div>'+agbBox()+'<button class="btn" data-act="senden" '+(st.agb?'':'disabled')+'>Weiter zur Zahlung (Demo)</button>';
+ /* SOLL */
+ if(s==='soll_produkt')return '<div class="kicker">Schritt 1 von 3 · Produkt</div><h1>Welches Produkt möchtest du diesmal anfragen?</h1>'+
+  opt('pick-new',st.pick==='new',PROD[st.cart].name,'Aus deinem Warenkorb · '+PROD[st.cart].qty,'<span class="pill new">Neu</span>')+
+  (st.cart!=='A'?opt('pick-old',st.pick==='old',PROD.A.name,'Wie bei deiner letzten Anfrage · 10 g','<span class="pill past">Letztes Mal</span>'):'')+
+  '<div class="notice">Du möchtest nur das Produkt wechseln? Das ist <b>keine</b> Änderung deines Gesundheitszustands. Danach fragen wir dich gleich getrennt.</div><button class="btn" data-act="pick-next" '+(st.pick?'':'disabled')+'>Weiter</button>';
+ if(s==='soll_gesundheit')return '<div class="kicker med">⚕ Schritt 2 von 3 · Deine Gesundheit</div><h1>Hat sich deine Gesundheit seit der letzten Anfrage verändert?</h1>'+'<p class="simnote">Test-Hinweis: Antworte nur für die erfundene Situation aus der Aufgabe, nicht für dich selbst.</p>'+
+  '<div class="medbox">'+med('Warum wir fragen')+'<div style="margin-top:6px">Die Ärztin oder der Arzt prüft deine Anfrage und muss wissen, ob sich gesundheitlich etwas geändert hat, z. B. neue Beschwerden, eine neue Diagnose oder Nebenwirkungen. Dein Produktwunsch gehört nicht dazu.</div></div>'+
+  opt('h-no',st.health==='nein','Nein, alles wie bisher','','')+opt('h-yes',st.health==='ja','Ja, es gibt etwas Neues','','')+
+  (st.health==='ja'?'<div class="notice">In der echten App würdest du das jetzt kurz beschreiben. Im Test bitte nichts eintragen.</div>':'')+
+  '<button class="btn" data-act="h-next" '+(st.health?'':'disabled')+'>Weiter zur Übersicht</button>';
+ if(s==='soll_uebersicht'){var r=PROD[st.request],diff=st.request!==st.cart;
+  return '<div class="kicker">Schritt 3 von 3 · Prüfen</div><h1>Deine Anfrage auf einen Blick</h1>'+
+  '<div class="card"><div class="row"><b>Angefragtes Produkt</b><button class="link" data-act="edit-prod">Produkt ändern</button></div><div class="line"></div>'+prod(r)+'</div>'+
+  (diff?'<div class="notice warn">Achtung: Das ist <b>nicht</b> das Produkt aus deinem Warenkorb ('+PROD[st.cart].name+').</div>':'')+
+  '<div class="medbox"><div class="row">'+med('Gesundheit')+'<button class="link" data-act="edit-health">Gesundheit ändern</button></div><div style="margin-top:6px">'+(st.health==='ja'?'Es gibt etwas Neues':'Unverändert seit der letzten Anfrage')+'</div></div>'+
+  '<div class="medbox"><div class="row">'+med('Ärztliche Prüfung')+'<b>'+FEE+'</b></div><div style="margin-top:6px">Online-Anfrage. Ob und was verschrieben wird, entscheidet die Ärztin oder der Arzt.</div></div>'+
+  agbBox()+'<button class="btn" data-act="senden" '+(st.agb?'':'disabled')+'>Anfrage absenden (Demo)</button>'}
+ if(s==='bestaetigung')return '<div class="kicker">Geschafft</div><h1>Deine Anfrage ist unterwegs</h1>'+statusCard('Anfrage vom 04.11.')+'<p class="fine">Demo: Es wurde nichts wirklich gesendet und nichts bezahlt.</p><button class="btn" data-act="to-survey">Weiter zur kurzen Bewertung</button>';
+ if(s==='bewertung')return '<div class="kicker">Deine Einschätzung · 1 Minute</div><h1>Wie verständlich war das für dich?</h1>'+
+  radio('rating_health','1. Wie klar war die Frage zum Gesundheitszustand?')+radio('rating_medication','2. Wie klar war, wie du einen Produktwechsel anfragen kannst?')+radio('rating_overview','3. Wie klar war, welches Produkt zur ärztlichen Prüfung ging?')+
+  '<div class="q"><label for="belief">Welches Produkt ist deiner Meinung nach in der Anfrage angekommen?</label><select id="belief"><option value="">Bitte wählen</option><option value="A">Testprodukt A</option><option value="B">Testprodukt B</option><option value="unsicher">Ich bin mir nicht sicher</option></select></div>'+
+  '<div class="q"><label for="conf">Wie sicher hast du dich gefühlt?</label><select id="conf"><option value="">Bitte wählen</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div>'+
+  '<div class="q"><label for="nps">Wie wahrscheinlich ist es, dass du diesen Ablauf einer Freundin oder einem Freund empfiehlst? (0 = gar nicht, 10 = sehr wahrscheinlich)</label><select id="nps"><option value="">Bitte wählen</option>'+[0,1,2,3,4,5,6,7,8,9,10].map(function(n){return '<option>'+n+'</option>'}).join('')+'</select></div>'+
+  '<div class="q"><label for="cmt">Was war unklar, was würdest du ändern? (freiwillig, bitte keine Gesundheitsdaten)</label><textarea id="cmt" rows="3"></textarea></div>'+
+  '<div class="err">'+esc(st.err)+'</div><button class="btn" data-act="survey-send">Bewertung abschicken</button>';
+ if(s==='ende'){var other=ist()?'soll':'ist';
+  return '<div class="kicker">Danke!</div><h1>Test abgeschlossen</h1><p>Deine Klicks wurden '+(CG.online()?'automatisch übermittelt':'hier lokal gesammelt (Vorschau)')+'. Zur Sicherheit kannst du sie kopieren und in den Chat einfügen.</p>'+
+  '<button class="btn sec" data-act="copy">Ergebnis kopieren</button><div class="fine" id="copied"></div><textarea class="json" id="json" readonly>'+esc(JSON.stringify(resultJSON(),null,1))+'</textarea>'+
+  '<a class="btn" href="'+CG.link('./',{v:other,o:'zweiter',quelle:'zweiter_test'})+'">Jetzt '+other.toUpperCase()+' testen</a><button class="btn sec" data-act="teilen">Test mit anderen teilen (Link kopieren)</button><div class="fine" id="geteilt"></div><a class="btn sec" href="'+CG.link('../index.html',{quelle:'nach_test'})+'">Zur Startseite</a>'}
+ return '';
+}
+function opt(act,sel,title,sub,right){return '<button class="option'+(sel?' sel':'')+'" data-act="'+act+'" aria-pressed="'+sel+'"><span class="chk">✓</span><span class="txt"><strong>'+title+'</strong>'+(sub?'<small>'+sub+'</small>':'')+'</span>'+right+'</button>'}
+function agbBox(){return '<div class="check"><input type="checkbox" id="agb" '+(st.agb?'checked':'')+'><label for="agb">Ich akzeptiere die <a href="../agb-demo.html" target="_self" data-act="agb-open" style="color:#9fd2ff">AGB</a> und die <a href="../datenschutz.html" style="color:#9fd2ff">Datenschutzerklärung</a>. <span class="pill med">Demo</span></label></div>'}
+function radio(k,l){return '<div class="q"><strong>'+l+'</strong><div class="scale">'+[1,2,3,4,5].map(function(n){return '<label><input type="radio" name="'+k+'" value="'+n+'">'+n+'</label>'}).join('')+'</div><div class="fine">1 = gar nicht verständlich, 5 = sehr verständlich</div></div>'}
+function resultJSON(){var s=st.survey||{};return {participant_id:st.code,mode:st.variante.toUpperCase(),sequence_order:st.reihenfolge,first_health:st.firstHealth,health_path:st.health,product_cart:st.cart,product_request:st.request,task_success:st.request==='B'?'1':'0',believed_product:s.geglaubt||'',backtracks:st.zurueck,aendern:st.aendern,time_seconds:st.sek||null,rating_health:s.r1,rating_medication:s.r2,rating_overview:s.r3,nps:s.nps,task_confidence:s.sicherheit,comment:s.kommentar||'',test_version:MESSKONZEPT.version,clicks:CG.S.events.filter(function(e){return e.e==='klick'}).map(function(e,i){return {nr:i+1,sek:e.t,bildschirm:e.bildschirm,klick:e.label}}),
+ tour:CG.S.events.filter(function(e){return /^tour_/.test(e.e)}).map(function(e){return {sek:e.t,ereignis:e.e,schritt:e.nr||null,name:e.name||''}}),
+ bildschirm_zeiten:(function(){var z={};CG.S.events.filter(function(e){return e.e==='bildschirm_dauer'}).forEach(function(e){z[e.name]=+((z[e.name]||0)+e.sek_auf).toFixed(1)});return z})(),
+ produkt_suchen:CG.S.events.filter(function(e){return e.e==='produkt_suche'}).map(function(e){return e.suchbegriff}),
+ warenkorb_verlauf:CG.S.events.filter(function(e){return e.e==='produkt_in_warenkorb'}).map(function(e){return e.produkt})}}
+
+/* ---------- Seitenpanel ---------- */
+var LEGEND='<div class="legend"><div><span class="sw" style="background:var(--act)"></span>✓ Grün: Aktion, Erfolg</div><div><span class="sw" style="background:var(--med-bg);border:2px solid var(--med-line)"></span><span style="color:var(--med)">⚕ Blau: alles Ärztliche (Gesundheitsfrage, ärztliche Prüfung, Rezept, Videosprechstunde)</span></div><div><span class="sw" style="background:var(--warn-bg);border:2px solid var(--warn)"></span>⚠ Orange: Achtung</div><div><span class="sw" style="background:var(--past-bg)"></span>↺ Grau: letztes Mal</div><div style="margin-top:6px;font-size:.85em">Jede Farbe hat zusätzlich ein Zeichen oder einen Text, damit sie auch ohne Farbsehen erkennbar ist.</div></div>';
+function panel(){var s=st.screen;
+ if(s==='start')return '<h2>Willkommen im Klick-Entwurf</h2><p>Erst lernst du die App kennen, dann testest du eine Folgeanfrage. Es gibt kein Richtig oder Falsch. Getestet wird die App, nicht du.</p><h2 style="margin-top:16px">So liest du die Farben</h2>'+LEGEND;
+ if(s==='tour'){var T=TOUR[st.tourAt];return '<div class="kicker'+(T.med?' med':'')+'">Funktion '+(st.tourAt+1)+' von '+TOUR.length+'</div><h2 style="margin-top:6px">'+T.t+'</h2><p><b>Wofür ist das?</b><br>'+T.what+'</p><div class="notice"><b>Im Alltag:</b><br>'+T.day+'</div><div class="dots">'+TOUR.map(function(_,i){return '<span class="'+(i===st.tourAt?'on':'')+'"></span>'}).join('')+'</div>'+
+  '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><button class="btn sec" data-act="tour-prev" '+(st.tourAt?'':'disabled')+'>← Zurück</button><button class="btn" data-act="tour-next">'+(st.tourAt===TOUR.length-1?'Zum Test →':'Weiter →')+'</button></div>'}
+ if(s==='anmeldung')return '<h2>Kurz vorab</h2><p>Der Test dauert etwa 5 Minuten. Deine Moderatorin oder dein Moderator sagt dir Code und Variante.</p>'+LEGEND;
+ if(['bewertung','ende'].indexOf(s)>=0)return '<h2>Deine Einschätzung</h2><p>Bitte bewerte nur, wie verständlich die App war, nicht die Produkte.</p>'+scenario;
+ return '<h2>Dein Szenario</h2>'+scenario+'<p class="fine">Variante: '+(st.variante||'–').toUpperCase()+' · Code: '+esc(st.code||'–')+'</p>'+LEGEND;
+}
+
+/* ---------- Rendern + Aktionen ---------- */
+var TABS=[['home','⌂','Start'],['produkte','⌕','Produkte'],['warenkorb','▤','Warenkorb'],['status','◷','Anfragen'],['hilfe','?','Hilfe']];
+function render(){
+ var testing=['home','produkte','warenkorb','konto','ist_gesundheit','ist_bearbeiten','ist_anfrageart','soll_produkt','soll_gesundheit','soll_uebersicht','nicht_test'].indexOf(st.screen)>=0;
+ var touring=st.screen==='tour';
+ $('view').innerHTML=view();$('panel').innerHTML=panel();
+ $('tag').innerHTML=touring?'<span>App kennenlernen</span><span>Tour</span>':testing?'<span>Test · '+(st.variante||'').toUpperCase()+'</span><span>'+esc(st.code||'')+'</span>':'<span>Klick-Entwurf V4</span><span>Demo</span>';
+ $('back').hidden=!(testing&&st.hist.length&&st.screen!=='home');
+ var tb=$('tabbar');var showTabs=touring||['home','produkte','warenkorb','nicht_test'].indexOf(st.screen)>=0;tb.hidden=!showTabs;
+ if(showTabs){var cur=touring?(TOUR[st.tourAt].tab==='start'?'home':TOUR[st.tourAt].tab):st.screen;tb.innerHTML=TABS.map(function(t){return '<button data-act="'+(touring?'tourtab-':'tab-')+t[0]+'" class="'+(t[0]===cur?'on':'')+'"><span>'+t[1]+'</span>'+t[2]+'</button>'}).join('')}
+ var q=$('prodq');if(q){q.oninput=function(){st.q=q.value;$('plist').innerHTML=productCards(true)};q.onchange=function(){var v=q.value.trim().slice(0,20);if(v&&v!==st.lastQ){st.lastQ=v;CG.track('produkt_suche',{suchbegriff:v,treffer:$('plist').querySelectorAll('.card').length})}}}
+ var a=$('agb');if(a)a.onchange=function(){st.agb=a.checked;CG.track(a.checked?'agb_akzeptiert':'agb_abgewaehlt');render()};
+}
+function act(id,el){
+ // Tour
+ if(id==='tour-start'){CG.track('tour_start');st.tourAt=0;go('tour');CG.setScreen('tour_1_'+TOUR[0].k);CG.track('tour_schritt',{nr:1,name:TOUR[0].k});return}
+ if(id==='tour-skip'){CG.track('tour_uebersprungen',{bei:0});go('anmeldung');return}
+ if(id==='tour-next'){if(st.tourAt<TOUR.length-1){st.tourAt++;CG.setScreen('tour_'+(st.tourAt+1)+'_'+TOUR[st.tourAt].k);CG.track('tour_schritt',{nr:st.tourAt+1,name:TOUR[st.tourAt].k});render();sagAn()}else{CG.track('tour_ende');go('anmeldung')}return}
+ if(id==='tour-prev'){if(st.tourAt>0){st.tourAt--;render()}return}
+ if(id.indexOf('tourtab-')===0||id.indexOf('tour-')===0)return;
+ // Anmeldung
+ if(id==='anmelden'){var c=($('code').value||'').trim().toUpperCase(),v=$('var').value,o=$('ord').value;
+  if(!/^[A-Z0-9_-]{2,16}$/.test(c)){st.err='Bitte einen Code mit 2 bis 16 Zeichen eingeben, z. B. T21.';st.code=c;return render()}
+  if(!v||!o||!$('ok').checked){st.err='Bitte Variante und Reihenfolge wählen und die Teilnahme bestätigen.';st.code=c;st.variante=v;st.reihenfolge=o;return render()}
+  st.code=c;st.variante=v;st.reihenfolge=o;CG.setUser(c);CG.setVariante(v,o);CG.track('test_anmeldung',{variante:v,reihenfolge:o});go('aufgabe');return}
+ if(id==='test-start'){CG.flush();st.t0=CG.sek();st.hist=[];CG.track('test_start',{variante:st.variante,reihenfolge:st.reihenfolge});go('home',{noHist:true});return}
+ // App-Navigation im Test
+ if(id==='tile-produkte'||id==='tab-produkte'){CG.track('produkte_ansicht');go('produkte');return}
+ if(id==='tile-warenkorb'||id==='tab-warenkorb'){if(st.cart)CG.track('warenkorb_ansicht',{variante:st.variante});go('warenkorb');return}
+ if(id==='tab-home'||id==='home'){go('home');return}
+ if(/^(tile|tab)-/.test(id)){CG.track('nebenbereich',{name:id});go('nicht_test');return}
+ if(id.indexOf('add-')===0){st.cart=id.slice(4);CG.track('produkt_in_warenkorb',{produkt:st.cart});render();return}
+ if(id==='to-cart'){CG.track('warenkorb_ansicht',{variante:st.variante});go('warenkorb');return}
+ if(id==='to-konto'){go('konto');return}
+ if(id==='konto-ok'){go(ist()?'ist_gesundheit':'soll_produkt');return}
+ // IST
+ if(id==='ist-ja'||id==='ist-nein'){var w=id==='ist-ja'?'ja':'nein';CG.track('gesundheit_antwort',{wert:w,erste:st.firstHealth===null,variante:'ist'});if(st.firstHealth===null)st.firstHealth=w;st.health=w;
+  if(w==='nein'){st.request='A';go('ist_anfrageart')}else go('ist_bearbeiten');return}
+ if(id==='ist-take'){st.request=st.cart;CG.track('produkt_wahl',{produkt:st.cart,variante:'ist'});go('ist_anfrageart');return}
+ if(id==='ist-keep'){st.request='A';CG.track('produkt_wahl',{produkt:'A',variante:'ist'});go('ist_anfrageart');return}
+ // SOLL
+ if(id==='pick-new'||id==='pick-old'){st.pick=id==='pick-new'?'new':'old';CG.track('produkt_wahl',{produkt:st.pick==='new'?st.cart:'A',variante:'soll'});render();return}
+ if(id==='pick-next'){st.request=st.pick==='new'?st.cart:'A';go(st.health?'soll_uebersicht':'soll_gesundheit');return}
+ if(id==='h-no'||id==='h-yes'){var hw=id==='h-no'?'nein':'ja';CG.track('gesundheit_antwort',{wert:hw,erste:st.firstHealth===null,variante:'soll'});if(st.firstHealth===null)st.firstHealth=hw;st.health=hw;render();return}
+ if(id==='h-next'){go('soll_uebersicht');return}
+ if(id==='edit-prod'){st.aendern++;CG.track('produkt_aendern',{variante:'soll'});go('soll_produkt');return}
+ if(id==='edit-health'){st.aendern++;CG.track('gesundheit_aendern',{variante:'soll'});go('soll_gesundheit');return}
+ // Absenden
+ if(id==='senden'){if(!st.agb)return;st.sek=+(CG.sek()-st.t0).toFixed(1);
+  CG.track('anfrage_gesendet',{produkt:st.request,variante:st.variante,warenkorb:st.cart});
+  CG.track('test_ende',{zurueck:st.zurueck,aendern:st.aendern,sek:st.sek,variante:st.variante});st.hist=[];go('bestaetigung',{noHist:true});return}
+ if(id==='to-survey'){go('bewertung',{noHist:true});return}
+ if(id==='teilen'){var u=new URL('../index.html',location.href);u.search='?quelle=empfehlung';var o3=$('geteilt');CG.track('teilen_klick',{ort:'test_ende',variante:st.variante});CG.flush();
+  try{navigator.clipboard.writeText(u.href).then(function(){o3.textContent='Link kopiert. Danke fürs Weitersagen!'},function(){o3.textContent=u.href})}catch(_){o3.textContent=u.href}return}
+ if(id==='survey-send'){var r=[];for(var i=0,k=['rating_health','rating_medication','rating_overview'];i<3;i++){var x=document.querySelector('input[name="'+k[i]+'"]:checked');if(!x){st.err='Bitte alle drei Fragen bewerten.';return render()}r.push(+x.value)}
+  var g=$('belief').value,cf=$('conf').value,np=$('nps').value;if(!g||!cf||np===''){st.err='Bitte noch angeben, welches Produkt du vermutest, wie sicher du warst und ob du es empfehlen würdest.';return render()}
+  np=+np;var npk=np>=9?'promoter':np>=7?'passiv':'kritiker';CG.track('nps_antwort',{wert:np,kategorie:npk,variante:st.variante});
+  st.survey={r1:r[0],r2:r[1],r3:r[2],geglaubt:g,sicherheit:+cf,nps:np,kommentar:($('cmt').value||'').slice(0,600)};
+  CG.track('bewertung_gesendet',{r1:r[0],r2:r[1],r3:r[2],durchschnitt:+((r[0]+r[1]+r[2])/3).toFixed(2),geglaubt:g,sicherheit:+cf,richtig_erkannt:g===st.request,nps:np,variante:st.variante,kommentar:st.survey.kommentar});
+  go('ende',{noHist:true});CG.flush();return}
+ if(id==='copy'){var t=$('json').value,o2=$('copied');try{navigator.clipboard.writeText(t).then(function(){o2.textContent='Kopiert.'},function(){$('json').select();o2.textContent='Text ist markiert: Strg/Cmd + C.'})}catch(e){$('json').select();o2.textContent='Text ist markiert: Strg/Cmd + C.'}return}
+}
+document.addEventListener('click',function(e){
+ var b=e.target.closest('[data-act],[data-tour],button,a');if(!b)return;
+ if(b.closest('.phone')||b.closest('.panel')){var lbl=(b.innerText||b.getAttribute('aria-label')||'').trim().replace(/\s+/g,' ').slice(0,60);if(lbl)CG.track('klick',{label:lbl})}
+ if(b.id==='back'){back();return}
+ if(b.dataset.tour)return; // Kacheln in der Tour sind nur Anschauung
+ var id=b.dataset.act;if(!id)return;
+ if(id==='agb-open'){CG.track('agb_geoeffnet');return} // Link öffnet die Demo-AGB im selben Tab
+ e.preventDefault();act(id,b);
+});
+CG.track('app_aufruf',{quelle:CG.S.quelle});
+if(qs.get('v')&&CG.S.code&&qs.get('o')){st.screen='anmeldung'}
+CG.setScreen(st.screen);render();
+})();
+</script>
+<script>
+(function(){var b=document.getElementById('gross');if(!b)return;
+ function set(on,track){document.documentElement.classList.toggle('gross-an',on);b.setAttribute('aria-pressed',on?'true':'false');b.textContent=on?'A− Normale Schrift':'A+ Größere Schrift';
+  try{sessionStorage.setItem('cg_gross',on?'1':'0')}catch(_){}
+  if(track&&window.CG)CG.track('app_einstellung',{wert:on?'grosse_schrift_an':'grosse_schrift_aus'});}
+ var on=false;try{on=sessionStorage.getItem('cg_gross')==='1'}catch(_){}
+ set(on,false);b.addEventListener('click',function(){set(b.getAttribute('aria-pressed')!=='true',true)});})();
+</script>
+</body>
+</html>

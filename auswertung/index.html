@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>CannGo KPI-Dashboard</title>
+<script src="../assets/messkonzept.js"></script>
+<style>
+:root{--bg:#f3f8f5;--card:#fff;--ink:#10322a;--muted:#55706a;--line:#d5e5dc;--ok:#0b7a4b;--okbg:#e2f5ea;--bad:#a8481f;--badbg:#fdebe1;--ist:#6b7c86;--soll:#0b7a4b;--med:#2457b8;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#0e1714;--card:#17231e;--ink:#e3f2ea;--muted:#9bb5a8;--line:#2c3e36;--ok:#4fd896;--okbg:#173a29;--bad:#f0a07e;--badbg:#3a2418;--ist:#a8b6be;--soll:#4fd896;--med:#8dbbff;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;padding:24px max(16px,env(safe-area-inset-left,0px)) 60px}
+main{max-width:1150px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+h1{font-size:28px;margin:0}h2{font-size:18px;margin:0 0 10px}
+.sub{color:var(--muted);margin:4px 0 0;max-width:75ch}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;min-width:0}
+textarea{width:100%;min-height:90px;font:12px/1.4 ui-monospace,Menlo,monospace;border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--bg);color:var(--ink)}
+.btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;align-items:center}
+button,label.file{font:600 14px system-ui,sans-serif;border-radius:9px;padding:9px 14px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+button.pri{background:var(--ok);border-color:var(--ok);color:var(--card)}
+.msg{font-size:13px;color:var(--muted)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;border-left:6px solid var(--line)}
+.kpi.ok{border-left-color:var(--ok)}.kpi.bad{border-left-color:var(--bad)}
+.kpi .b{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.kpi .n{font-weight:700;margin:2px 0 8px}
+.kpi .v{display:flex;gap:16px;font:800 24px system-ui,sans-serif;font-variant-numeric:tabular-nums}
+.kpi .v small{display:block;font:600 11px system-ui,sans-serif;color:var(--muted)}
+.kpi .z{font-size:12px;color:var(--muted);margin-top:6px}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13.5px;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:7px 9px;border-bottom:1px solid var(--line);white-space:nowrap;vertical-align:top}
+th{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+td.wrap{white-space:normal;min-width:200px}
+.bar{height:14px;border-radius:7px;background:var(--ok)}
+.pill{border-radius:99px;padding:2px 9px;font-size:12px;font-weight:700}
+.p-ist{background:color-mix(in srgb,var(--ist) 22%,transparent)}.p-soll{background:color-mix(in srgb,var(--soll) 22%,transparent)}
+.g{color:var(--ok);font-weight:700}.r{color:var(--bad);font-weight:700}
+details{border-top:1px solid var(--line);padding:8px 0}summary{cursor:pointer;font-weight:600}
+.empty{color:var(--muted);padding:18px;text-align:center}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.phase{margin:0 0 18px}.phase h3{margin:0 0 8px;font-size:18px}.phase h3 small{font-weight:400;color:var(--muted);font-size:14px;margin-left:6px}.eit,.pf{font-size:12.5px;margin-top:6px;color:var(--muted)}.eit{color:var(--ink)}
+:focus-visible{outline:3px solid #b7801c;outline-offset:2px}
+</style>
+</head>
+<body>
+<main>
+ <header><h1>CannGo KPI-Dashboard</h1>
+ <p class="sub">Die Daten kommen live aus der Google-Tabelle. Alternativ: CSV aus der Tabelle (Blatt „messung“) oder aus Netlify hier hochladen. Oder füge den Text aus „Ergebnis kopieren“ ein. Die KPIs kommen aus <code>assets/messkonzept.js</code>. Alles bleibt in deinem Browser.</p></header>
+
+ <section class="card" id="livebox"><h2>Live-Daten</h2>
+  <p class="muted" style="margin:0 0 10px" id="livetxt">Die Messdaten werden automatisch aus der Google-Tabelle geladen. Mit Schlüssel siehst du zusätzlich die Freitext-Kommentare.</p>
+  <div class="btns"><button class="pri" id="live">Live-Daten neu laden</button><label class="sr" for="key">Schlüssel</label><input id="key" type="password" placeholder="Schlüssel (optional)" autocomplete="off" style="font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink)"><span class="msg" id="livemsg"></span></div>
+ </section>
+ <section class="card"><h2>Daten laden</h2>
+  <textarea id="in" placeholder="CSV aus Netlify oder JSON hier einfügen …"></textarea>
+  <div class="btns"><label class="file">CSV-Datei wählen<input type="file" id="file" accept=".csv,.json,.txt" hidden></label><button class="pri" id="go">Auswerten</button><button id="clear">Leeren</button><span class="msg" id="msg"></span></div>
+ </section>
+
+ <section><h2>KPIs nach AARRR</h2><p class="muted" style="margin:0 0 10px">Fünf Phasen aus den Pirate Metrics, dazu Roadmap-Signale. ⚠ markiert Zahlen, die allein noch keinen Erfolg belegen.</p><div id="kpis"><div class="empty">Noch keine Daten.</div></div></section>
+ <section class="card"><h2>Landingpage: Wie wird gelesen?</h2>
+  <p class="muted" style="margin:0 0 10px">Lesemuster pro Besuch: <b>Direkt geklickt</b> = Klick in den Test nach höchstens 10 s, kaum gescrollt · <b>Überflogen</b> = bis unten in höchstens 20 s oder kein Abschnitt länger als 3 s · <b>Gelesen</b> = mindestens 3 Abschnitte je 5 s oder länger · sonst <b>Kurz geschaut</b>.</p>
+  <div id="lpm" class="scroll"></div>
+  <h3 style="margin:18px 0 6px">Abschnitte</h3><div id="lpa" class="scroll"></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:14px">
+   <div><h3 style="margin:0 0 6px">Woher kommen die Besuche?</h3><div id="lpq" class="scroll"></div></div>
+   <div><h3 style="margin:0 0 6px">Welcher Knopf führt in den Test?</h3><div id="lpc" class="scroll"></div></div>
+   <div><h3 style="margin:0 0 6px">Interesse an Ideen</h3><div id="lpi" class="scroll"></div></div>
+   <div><h3 style="margin:0 0 6px">Erste Interaktion</h3><div id="lpe" class="scroll"></div></div>
+  </div>
+  <div class="btns" style="margin-top:14px"><button id="csv">Auswertung pro Besuch als CSV speichern</button><span class="msg" id="csvmsg"></span></div>
+ </section>
+ <section class="card"><h2>Trichter: Wo brechen Leute ab?</h2><div id="fun" class="scroll"></div></section>
+ <section class="card"><h2>Zeit pro Bildschirm (Ø Sekunden)</h2><div id="scr" class="scroll"></div></section>
+ <section class="card"><h2>Pro Testcode</h2><div id="ppl" class="scroll"></div></section>
+ <section class="card"><h2>Klickverläufe</h2><div id="paths"></div></section>
+ <section class="card"><h2>Datenqualität</h2><div id="dq" class="scroll"></div></section>
+ <section class="card"><h2>Ereignisliste (feste Namen)</h2><p class="muted" style="margin:0 0 10px">Aus <code>assets/messkonzept.js</code>. ★ = in GA4 als Schlüsselereignis markieren. Die Zahl zeigt, wie oft das Ereignis in den geladenen Daten vorkommt.</p><div id="evl" class="scroll" tabindex="0" role="region" aria-label="Ereignisliste, scrollbar"></div></section>
+</main>
+<script>
+(function(){
+'use strict';
+var MK=window.MESSKONZEPT;var $=function(i){return document.getElementById(i)};
+var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
+var chunks=[];
+
+/* ---------- Einlesen ---------- */
+function parseCSV(t){var rows=[],row=[],f='',q=false;for(var i=0;i<t.length;i++){var c=t[i];
+ if(q){if(c==='"'){if(t[i+1]==='"'){f+='"';i++}else q=false}else f+=c}
+ else if(c==='"')q=true;else if(c===','){row.push(f);f=''}else if(c==='\n'||c==='\r'){if(c==='\r'&&t[i+1]==='\n')i++;row.push(f);rows.push(row);row=[];f=''}else f+=c}
+ if(f||row.length){row.push(f);rows.push(row)}return rows}
+function extractJSON(t){var out=[],d=0,s=-1,q=false,e=false;for(var i=0;i<t.length;i++){var c=t[i];
+ if(q){if(e)e=false;else if(c==='\\')e=true;else if(c==='"')q=false;continue}
+ if(c==='"'){q=true;continue}if(c==='{'){if(d===0)s=i;d++}else if(c==='}'){d--;if(d===0&&s>=0){try{out.push(JSON.parse(t.slice(s,i+1)))}catch(_){}s=-1}}}return out}
+function fromCopy(o){ // Text aus "Ergebnis kopieren" im Prototyp
+ var ev=[{e:'test_start',t:0,variante:(o.mode||'').toLowerCase()}];
+ (o.clicks||[]).forEach(function(c){ev.push({e:'klick',t:c.sek,bildschirm:c.bildschirm,label:c.klick})});
+ (o.tour||[]).forEach(function(x){ev.push({e:x.ereignis,t:x.sek,nr:x.schritt,name:x.name})});
+ Object.keys(o.bildschirm_zeiten||{}).forEach(function(k){ev.push({e:'bildschirm_dauer',name:k,sek_auf:o.bildschirm_zeiten[k]})});
+ if(o.first_health)ev.push({e:'gesundheit_antwort',wert:o.first_health,erste:true,variante:(o.mode||'').toLowerCase()});
+ if(o.product_request)ev.push({e:'anfrage_gesendet',produkt:o.product_request,variante:(o.mode||'').toLowerCase()});
+ ev.push({e:'test_ende',zurueck:o.backtracks||0,aendern:o.aendern||0,sek:o.time_seconds,variante:(o.mode||'').toLowerCase()});
+ if(o.rating_health)ev.push({e:'bewertung_gesendet',durchschnitt:+((o.rating_health+o.rating_medication+o.rating_overview)/3).toFixed(2),variante:(o.mode||'').toLowerCase(),kommentar:o.comment});
+ return {sid:'copy-'+(o.participant_id||'?')+'-'+(o.mode||''),code:o.participant_id,seite:'app',variante:(o.mode||'').toLowerCase(),teil:0,events:ev}}
+function load(t){var added=0;t=t.trim();if(!t)return 0;
+ if(/^[^{\[]*payload/i.test(t.split('\n')[0])){var rows=parseCSV(t);var h=rows[0].map(function(x){return x.trim().toLowerCase()});var pi=h.indexOf('payload');
+  rows.slice(1).forEach(function(r){try{var o=JSON.parse(r[pi]);if(o&&o.events){chunks.push(o);added++}}catch(_){}})}
+ else extractJSON(t).forEach(function(o){if(o.events){chunks.push(o);added++}else if(o.participant_id&&o.mode){chunks.push(fromCopy(o));added++}});
+ return added}
+
+/* ---------- Aufbereiten ---------- */
+function build(){
+ var bySid={};chunks.forEach(function(c){(bySid[c.sid]=bySid[c.sid]||[]).push(c)});
+ var sessions=Object.keys(bySid).map(function(sid){var cs=bySid[sid].sort(function(a,b){return (a.seite==='landingpage'?0:1)-(b.seite==='landingpage'?0:1)||(a.teil||0)-(b.teil||0)});
+  var code='',events=[],cur='';cs.forEach(function(c){if(c.code)code=c.code;(c.events||[]).forEach(function(e){if(e.e==='test_start'&&e.variante)cur=e.variante;events.push(Object.assign({},e,{seite:c.seite,var:e.variante||cur||''}))})});
+  events.forEach(function(e){e.code=code});return {sid:sid,code:code,events:events}});
+ var units=[];sessions.forEach(function(s){var g={};s.events.forEach(function(e){var k=e.var||'';(g[k]=g[k]||[]).push(e)});
+  Object.keys(g).forEach(function(v){units.push({sid:s.sid,code:s.code,variante:v,events:g[v]})})});
+ return {sessions:sessions,units:units}}
+function match(e,z){if(e.e!==z.e)return false;var w=z.wo||{};return Object.keys(w).every(function(k){return Array.isArray(w[k])?w[k].indexOf(e[k])>=0:e[k]===w[k]})}
+function has(list,z){return list.some(function(e){return match(e,z)})}
+function vals(list,z,f){return list.filter(function(e){return match(e,z)}).map(function(e){return +e[f]}).filter(function(x){return !isNaN(x)})}
+function median(a){if(!a.length)return null;a=a.slice().sort(function(x,y){return x-y});var m=a.length>>1;return a.length%2?a[m]:(a[m-1]+a[m])/2}
+function calc(k,groups){ // groups: array of event-lists
+ if(k.typ==='nps'){var v=[];groups.forEach(function(g){v=v.concat(vals(g,k.zaehler,k.feld))});if(!v.length)return null;var pr=v.filter(function(x){return x>=9}).length,kr=v.filter(function(x){return x<=6}).length;return Math.round((pr-kr)/v.length*100)}
+ if(k.typ==='verhaeltnis'){var z=groups.filter(function(g){return has(g,k.zaehler)}).length,n=groups.filter(function(g){return has(g,k.nenner)}).length;if(!n)return null;return z/n*(k.faktor||1)}
+ if(k.typ==='code_quote'){var c={};groups.forEach(function(g){g.forEach(function(e){if(match(e,k.zaehler)&&e.code)c[e.code]=(c[e.code]||0)+1})});var ks=Object.keys(c);if(!ks.length)return null;return ks.filter(function(x){return c[x]>=(k.min||2)}).length/ks.length}
+ if(k.typ==='eindeutig'){var set={};groups.forEach(function(g){g.forEach(function(e){if(match(e,k.zaehler)&&e[k.feld])set[e[k.feld]]=1})});return Object.keys(set).length}
+ if(k.typ==='anzahl')return groups.filter(function(g){return has(g,k.zaehler)}).length;
+ if(k.typ==='anteil'){var n=groups.filter(function(g){return has(g,k.nenner)});if(!n.length)return null;return n.filter(function(g){return has(g,k.zaehler)}).length/n.length}
+ var all=[];groups.forEach(function(g){all=all.concat(vals(g,k.zaehler,k.feld))});
+ if(!all.length)return null;return k.typ==='median'?median(all):all.reduce(function(a,b){return a+b},0)/all.length}
+function fmt(k,v){if(v==null)return '–';if(k.typ==='anteil'||k.typ==='code_quote')return Math.round(v*100)+' %';if(k.typ==='nps')return (v>0?'+':'')+v;if(k.typ==='verhaeltnis')return (Math.round(v*100)/100).toString().replace('.',',')+(k.einheit?' '+k.einheit:'');if(k.typ==='anzahl'||k.typ==='eindeutig')return String(v);return (Math.round(v*10)/10).toString().replace('.',',')}
+function okv(k,v){if(v==null||k.ziel==null)return '';return (k.ziel_richtung==='tief'?v<=k.ziel:v>=k.ziel)?'ok':'bad'}
+
+/* ---------- Anzeigen ---------- */
+function renderEv(D){
+ var cnt={},unk={};(D?D.sessions:[]).forEach(function(se){se.events.forEach(function(e){cnt[e.e]=(cnt[e.e]||0)+1;if(!(MK.ereignisse||[]).some(function(x){return x.e===e.e}))unk[e.e]=(unk[e.e]||0)+1})});
+ $('evl').innerHTML='<table><tr><th>Ereignis</th><th>Wo</th><th>Wann</th><th>Werte</th><th>Anzahl</th></tr>'+(MK.ereignisse||[]).map(function(x){return '<tr><td><code>'+esc(x.e)+'</code>'+(x.ga4?' ★':'')+'</td><td>'+esc(x.ort)+'</td><td class="wrap">'+esc(x.wann)+'</td><td class="wrap">'+esc(x.param||'')+'</td><td class="'+(cnt[x.e]?'g':'')+'">'+(cnt[x.e]||0)+'</td></tr>'}).join('')+'</table>';
+ if(!D){$('dq').innerHTML='<div class="empty">–</div>';return}
+ var vers={},stat=0,ana=0;chunks.forEach(function(c){vers[c.v||'?']=1});D.sessions.forEach(function(se){var c=chunks.filter(function(x){return x.sid===se.sid});if(c.some(function(x){return x.consent&&x.consent.statistik}))stat++;if(c.some(function(x){return x.consent&&x.consent.analyse}))ana++});
+ var uk=Object.keys(unk);
+ $('dq').innerHTML='<table><tr><td>Sitzungen</td><td>'+D.sessions.length+'</td></tr><tr><td>Datenpakete (Netlify-Einträge)</td><td>'+chunks.length+'</td></tr><tr><td>Ereignisse gesamt</td><td>'+Object.keys(cnt).reduce(function(a,k){return a+cnt[k]},0)+'</td></tr><tr><td>Versionen</td><td>'+esc(Object.keys(vers).join(', '))+'</td></tr><tr><td>Sitzungen mit GA4-Zustimmung</td><td>'+stat+' von '+D.sessions.length+' (nur diese erscheinen auch in GA4)</td></tr><tr><td>Sitzungen mit Clarity-Zustimmung</td><td>'+ana+' von '+D.sessions.length+'</td></tr><tr><td>Unbekannte Ereignisse</td><td class="'+(uk.length?'r':'g')+'">'+(uk.length?esc(uk.map(function(k){return k+' ('+unk[k]+')'}).join(', ')):'keine')+'</td></tr></table>'}
+var LP_NAMES={hero:'Start (Überschrift)',problem:'Das Problem',loesung:'Die Lösung',klicktest:'Klicktest',ideen:'Weitere Ideen',vorschlag:'Idee einreichen',daten:'Transparenz'};
+var ROWS=[];
+function med(a){return median(a.filter(function(x){return x!=null&&!isNaN(x)}))}
+function lesemuster(ev){
+ var cta=ev.filter(function(e){return e.e==='lp_cta_klick'})[0],mx=Math.max.apply(null,[0].concat(ev.filter(function(e){return e.e==='lp_scroll_max'}).map(function(e){return +e.prozent||0})));
+ var ab=ev.filter(function(e){return e.e==='lp_abschnitt'}),bottom=ev.filter(function(e){return e.e==='lp_scroll'&&e.prozent===100})[0];
+ var lang=ab.filter(function(e){return e.sek_sichtbar>=5}).length,best=Math.max.apply(null,[0].concat(ab.map(function(e){return +e.sek_sichtbar||0})));
+ if(cta&&cta.sek<=10&&mx<30)return 'Direkt geklickt';
+ if(lang>=3)return 'Gelesen';
+ if((bottom&&bottom.sek<=20)||(mx>=75&&best<=3))return 'Überflogen';
+ return 'Kurz geschaut'}
+function tbl(head,rows){return rows.length?'<table><tr>'+head.map(function(h){return '<th>'+h+'</th>'}).join('')+'</tr>'+rows.map(function(r){return '<tr>'+r.map(function(c){return '<td>'+c+'</td>'}).join('')+'</tr>'}).join('')+'</table>':'<div class="empty">Noch keine Daten.</div>'}
+function renderLP(D){
+ var lp=D?D.sessions.filter(function(s){return s.events.some(function(e){return e.e==='lp_aufruf'})}):[];
+ ROWS=lp.map(function(s){var ev=s.events,get=function(n){return ev.filter(function(e){return e.e===n})};
+  var v=get('lp_verlassen')[0]||{},fi=get('lp_erste_interaktion')[0]||{},c=get('lp_cta_klick')[0]||{},mx=get('lp_scroll_max')[0]||{};
+  var ts=get('test_start'),an=get('anfrage_gesendet'),bw=get('bewertung_gesendet');
+  return {sid:s.sid,code:s.code||'',quelle:((get('lp_aufruf')[0]||{}).quelle||''),muster:lesemuster(ev),erste_interaktion_sek:fi.sek,erste_interaktion_art:fi.art||'',verweildauer_sek:v.sek,scroll_max:mx.prozent!=null?mx.prozent:v.scroll_max,
+   klick_in_test_sek:c.sek,knopf:c.position||'',ideen_interesse:get('lp_idee_interesse').map(function(e){return e.idee}).join(' '),formulare:get('lp_formular_gesendet').map(function(e){return e.formular}).join(' '),
+   tests:ts.map(function(e){return e.variante}).join(' '),produkt_ist:(an.filter(function(e){return e.variante==='ist'})[0]||{}).produkt||'',produkt_soll:(an.filter(function(e){return e.variante==='soll'})[0]||{}).produkt||'',
+   bewertung:bw.map(function(e){return e.variante+':'+e.durchschnitt}).join(' ')}});
+ var n=ROWS.length,pct=function(k){return n?Math.round(k/n*100)+' %':'–'};
+ var mus=['Direkt geklickt','Gelesen','Überflogen','Kurz geschaut'].map(function(m){var g=ROWS.filter(function(r){return r.muster===m});
+  return [m,g.length,pct(g.length),esc(med(g.map(function(r){return r.verweildauer_sek}))==null?'–':String(med(g.map(function(r){return r.verweildauer_sek}))).replace('.',',')),g.length?Math.round(g.filter(function(r){return r.klick_in_test_sek!=null}).length/g.length*100)+' %':'–']});
+ $('lpm').innerHTML=n?tbl(['Lesemuster','Besuche','Anteil','Verweildauer (Median, s)','davon in den Test'],mus):'<div class="empty">Noch keine Besuche der Landingpage.</div>';
+ var ab=Object.keys(LP_NAMES).map(function(k){var reach=lp.map(function(s){return s.events.filter(function(e){return e.e==='lp_abschnitt_erreicht'&&e.abschnitt===k})[0]}).filter(Boolean);
+  var vis=lp.map(function(s){return s.events.filter(function(e){return e.e==='lp_abschnitt'&&e.abschnitt===k})[0]}).filter(Boolean).map(function(e){return +e.sek_sichtbar});
+  var m=med(vis),mr=med(reach.map(function(e){return +e.sek}));
+  return [esc(LP_NAMES[k]),pct(reach.length),m==null?'–':String(m).replace('.',','),mr==null?'–':String(mr).replace('.',',')]});
+ $('lpa').innerHTML=n?tbl(['Abschnitt','erreicht von','Lesezeit (Median, s)','erreicht nach (Median, s)'],ab):'<div class="empty">–</div>';
+ var cnt=function(list){var o={};list.forEach(function(x){if(x)o[x]=(o[x]||0)+1});return Object.keys(o).sort(function(a,b){return o[b]-o[a]}).map(function(k){return [esc(k),o[k]]})};
+ $('lpq').innerHTML=tbl(['Quelle','Besuche'],cnt(lp.map(function(se){var e=se.events.filter(function(x){return x.e==='lp_aufruf'})[0];return e&&e.quelle||'direkt'})));
+ $('lpc').innerHTML=tbl(['Knopf','Klicks'],cnt(ROWS.map(function(r){return r.knopf})));
+ $('lpi').innerHTML=tbl(['Idee','Besuche'],cnt([].concat.apply([],ROWS.map(function(r){return r.ideen_interesse?r.ideen_interesse.split(' '):[]}))));
+ $('lpe').innerHTML=tbl(['Art','Besuche','Median (s)'],cnt(ROWS.map(function(r){return r.erste_interaktion_art})).map(function(x){var m=med(ROWS.filter(function(r){return r.erste_interaktion_art===x[0]}).map(function(r){return r.erste_interaktion_sek}));return [x[0],x[1],m==null?'–':String(m).replace('.',',')]}));
+}
+function csvOut(){if(!ROWS.length){$('csvmsg').textContent='Noch keine Daten.';return}
+ var keys=Object.keys(ROWS[0]),q=function(v){v=v==null?'':String(v);return /[";\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
+ var txt='\ufeff'+keys.join(';')+'\n'+ROWS.map(function(r){return keys.map(function(k){return q(r[k])}).join(';')}).join('\n');
+ try{var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'text/csv;charset=utf-8'}));a.download='canngo_auswertung_'+new Date().toISOString().slice(0,10)+'.csv';document.body.appendChild(a);a.click();a.remove();$('csvmsg').textContent='Gespeichert ('+ROWS.length+' Besuche). Öffnet sich in Excel mit Semikolon-Trennung.'}catch(e){$('csvmsg').textContent='Speichern ging hier nicht. Bitte auf der Netlify-Seite nutzen.'}}
+function render(){
+ if(!chunks.length){renderEv(null);renderLP(null);$('kpis').innerHTML='<div class="empty">Noch keine Daten.</div>';['fun','scr','ppl','paths'].forEach(function(i){$(i).innerHTML='<div class="empty">–</div>'});return}
+ var D=build();renderEv(D);renderLP(D);
+ var bySidEvents=D.sessions.map(function(s){return s.events});
+ var zt=function(k){return k.ziel!=null?((k.typ==='anteil'||k.typ==='code_quote')?Math.round(k.ziel*100)+' %':k.ziel):''};
+ var card=function(k){var extra=(k.eitel?'<div class="eit">⚠ Eitelkeitszahl? '+esc(k.pruef||'')+'</div>':(k.pruef?'<div class="pf">'+esc(k.pruef)+'</div>':''));
+  if(k.je_variante){var r=['ist','soll'].map(function(v){return calc(k,D.units.filter(function(u){return u.variante===v}).map(function(u){return u.events}))});
+   return '<div class="kpi '+okv(k,r[1])+'"><div class="n">'+esc(k.name)+'</div><div class="v"><span><small>IST</small>'+fmt(k,r[0])+'</span><span><small>SOLL</small>'+fmt(k,r[1])+'</span></div>'+(k.ziel!=null?'<div class="z">Ziel SOLL: '+zt(k)+'</div>':'')+extra+'</div>'}
+  var v=calc(k,bySidEvents);return '<div class="kpi '+okv(k,v)+'"><div class="n">'+esc(k.name)+'</div><div class="v"><span>'+fmt(k,v)+'</span></div>'+(k.ziel!=null?'<div class="z">Ziel: '+zt(k)+'</div>':'')+extra+'</div>'};
+ var ph=MK.phasen||[{id:'',name:'KPIs',frage:''}];
+ $('kpis').innerHTML=ph.map(function(p){var ks=MK.kpis.filter(function(k){return (k.phase||'')===p.id});if(!ks.length)return '';
+  return '<div class="phase"><h3><span>'+(p.icon||'')+'</span> '+esc(p.name)+' <small>'+esc(p.frage)+'</small></h3><div class="kpis">'+ks.map(card).join('')+'</div></div>'}).join('');
+ // Trichter
+ var steps=MK.trichter.map(function(s){return {name:s.name,n:D.sessions.filter(function(x){return x.events.some(function(e){return e.e===s.e})}).length}});
+ var top=Math.max.apply(null,steps.map(function(s){return s.n}).concat([1]));
+ $('fun').innerHTML='<table><tr><th>Schritt</th><th>Sitzungen</th><th>vom vorigen</th><th style="width:40%"></th></tr>'+steps.map(function(s,i){var prev=i?steps[i-1].n:null;var pct=prev?Math.round(s.n/prev*100):null;
+  return '<tr><td>'+esc(s.name)+'</td><td>'+s.n+'</td><td class="'+(pct!=null&&pct<70?'r':'')+'">'+(pct==null?'–':pct+' %')+'</td><td><div class="bar" style="width:'+Math.max(2,s.n/top*100)+'%"></div></td></tr>'}).join('')+'</table>';
+ // Zeit pro Bildschirm
+ var t={};D.units.forEach(function(u){u.events.forEach(function(e){if(e.e==='bildschirm_dauer'&&e.name){var key=e.name;t[key]=t[key]||{ist:[],soll:[],alle:[]};t[key].alle.push(+e.sek_auf);if(u.variante==='ist'||u.variante==='soll')t[key][u.variante].push(+e.sek_auf)}})});
+ var avg=function(a){return a.length?(a.reduce(function(x,y){return x+y},0)/a.length).toFixed(1).replace('.',','):'–'};
+ $('scr').innerHTML=Object.keys(t).length?'<table><tr><th>Bildschirm</th><th>Ø alle</th><th>Ø IST</th><th>Ø SOLL</th><th>n</th></tr>'+Object.keys(t).sort().map(function(k){return '<tr><td>'+esc(k)+'</td><td>'+avg(t[k].alle)+'</td><td>'+avg(t[k].ist)+'</td><td>'+avg(t[k].soll)+'</td><td>'+t[k].alle.length+'</td></tr>'}).join('')+'</table>':'<div class="empty">Keine Bildschirmzeiten.</div>';
+ // Pro Testcode
+ var tests=D.units.filter(function(u){return u.variante});
+ $('ppl').innerHTML=tests.length?'<table><tr><th>Code</th><th>Variante</th><th>Erster Klick Gesundheit</th><th>Produkt</th><th>Zurück</th><th>Ändern</th><th>Sek.</th><th>Bewertung Ø</th><th>Erkannt</th><th>Kommentar</th></tr>'+tests.map(function(u){
+  var f=function(n,w){return u.events.filter(function(e){return e.e===n&&(!w||Object.keys(w).every(function(k){return e[k]===w[k]}))}).pop()||{}};
+  var h=f('gesundheit_antwort',{erste:true}),a=f('anfrage_gesendet'),te=f('test_ende'),b=f('bewertung_gesendet');
+  return '<tr><td><b>'+esc(u.code||'–')+'</b></td><td><span class="pill p-'+u.variante+'">'+u.variante.toUpperCase()+'</span></td><td class="'+(h.wert==='nein'?'g':h.wert?'r':'')+'">'+esc(h.wert||'–')+'</td><td class="'+(a.produkt==='B'?'g':a.produkt?'r':'')+'">'+esc(a.produkt||'–')+'</td><td>'+esc(te.zurueck!=null?te.zurueck:'–')+'</td><td>'+esc(te.aendern!=null?te.aendern:'–')+'</td><td>'+esc(te.sek!=null?te.sek:'–')+'</td><td>'+esc(b.durchschnitt!=null?b.durchschnitt:'–')+'</td><td>'+(b.richtig_erkannt===true?'<span class="g">ja</span>':b.richtig_erkannt===false?'<span class="r">nein</span>':'–')+'</td><td class="wrap">'+esc(b.kommentar||'')+'</td></tr>'}).join('')+'</table>':'<div class="empty">Noch keine Tests.</div>';
+ // Klickverläufe
+ $('paths').innerHTML=D.units.map(function(u){var cl=u.events.filter(function(e){return e.e==='klick'||e.e==='lp_cta_klick'});if(!cl.length)return '';var last=0;
+  return '<details><summary>'+esc(u.code||u.sid)+' · '+(u.variante?u.variante.toUpperCase():'Landingpage')+' · '+cl.length+' Klicks</summary><div class="scroll"><table><tr><th>Sek.</th><th>Pause</th><th>Seite / Bildschirm</th><th>Klick</th></tr>'+
+  cl.map(function(e){var p=(e.t-last);last=e.t;return '<tr><td>'+e.t+'</td><td class="'+(p>=10?'r':'')+'">'+p.toFixed(1)+'</td><td>'+esc(e.seite==='landingpage'?'Landingpage':e.bildschirm)+'</td><td>'+esc(e.label||'Knopf Landingpage')+'</td></tr>'}).join('')+'</table></div></details>'}).join('')||'<div class="empty">Keine Klicks.</div>';
+}
+$('go').onclick=function(){var n=load($('in').value);$('msg').textContent=n?n+' Datensätze geladen.':'Nichts erkannt. CSV aus Netlify oder JSON einfügen.';$('in').value='';render()};
+$('file').onchange=function(e){var f=e.target.files[0];if(!f)return;f.text().then(function(t){var n=load(t);$('msg').textContent=n+' Datensätze aus '+f.name+' geladen.';render()})};
+$('clear').onclick=function(){chunks=[];render();$('msg').textContent='Geleert.'};
+$('csv').onclick=csvOut;
+function sammelUrl(){var u=MK.sammel_url||'';return /^https:\/\/(script\.google(usercontent)?\.com\/|[a-z0-9-]+\.[a-z0-9-]+\.workers\.dev\/?)/.test(u)?u:''}
+function liveLoad(){var u=sammelUrl();if(!u){$('livetxt').textContent='Noch keine Datenbank verbunden (sammel_url in assets/messkonzept.js). Bis dahin: CSV unten hochladen.';$('live').disabled=true;return}
+ var k=$('key').value.trim();try{if(k)sessionStorage.setItem('cg_key',k)}catch(_){}
+ $('livemsg').textContent='Lade …';
+ fetch(u+'?typ=messung'+(k?'&schluessel='+encodeURIComponent(k):''),{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){
+  if(!d.ok){$('livemsg').textContent=d.fehler||'Keine Daten.';return}
+  chunks=chunks.filter(function(c){return !c._live});(d.daten||[]).forEach(function(p){if(p&&p.events){p._live=1;chunks.push(p)}});
+  $('livemsg').textContent=(d.anzahl||0)+' Datenpakete geladen'+(d.voll?' (mit Kommentaren)':'')+' · Stand '+new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});render()})
+ .catch(function(){$('livemsg').textContent='Laden fehlgeschlagen. Ist die Web-App für „Jeder“ freigegeben?'})}
+$('live').onclick=liveLoad;
+try{var sk=sessionStorage.getItem('cg_key');if(sk)$('key').value=sk}catch(_){}
+liveLoad();
+render();
+})();
+</script>
+</body>
+</html>
