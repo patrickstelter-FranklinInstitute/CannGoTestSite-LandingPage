@@ -13,7 +13,7 @@ window.MESSKONZEPT = {
   clarity_id: 'z9cx74st3n',    // Microsoft Clarity: Einstellungen > Übersicht > Projekt-ID
 
   /* --- 2. Allgemein -------------------------------------------------- */
-  version: '2026-11-09-v18',
+  version: '2026-11-10-v18b',
   netlify_form: 'messung',           // Name des Netlify-Formulars (nur falls du weiter Netlify nutzt)
 
   /* Datenspeicher für die eigene Messung (Weg B) und die Formulare:
