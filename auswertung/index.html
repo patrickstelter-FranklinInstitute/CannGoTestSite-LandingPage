@@ -68,7 +68,11 @@ details{border-top:1px solid var(--line);padding:8px 0}summary{cursor:pointer;fo
    <div><h3 style="margin:0 0 6px">Land</h3><div id="kland" class="scroll"></div></div>
    <div><h3 style="margin:0 0 6px">Gerät</h3><div id="kger" class="scroll"></div></div>
    <div><h3 style="margin:0 0 6px">Herkunfts-Website</h3><div id="kref" class="scroll"></div></div>
+   <div><h3 style="margin:0 0 6px">Region</h3><div id="kreg" class="scroll"></div></div>
+   <div><h3 style="margin:0 0 6px">Bildschirm (Klasse)</h3><div id="kbs" class="scroll"></div></div>
+   <div><h3 style="margin:0 0 6px">Bildschirmgröße (Fenster, px)</h3><div id="kbsg" class="scroll"></div></div>
   </div>
+  <p class="muted" style="margin:8px 0 0">Bildschirmgröße = Fenstergröße beim ersten Aufruf (Breite × Höhe in Pixeln). Klasse: Handy unter 600 px, Tablet 600–1023 px, Desktop ab 1024 px. Kanal steht in der Tabelle oben.</p>
   <div class="btns" style="margin-top:14px"><button id="kcsv">Kanal-Auswertung als CSV speichern</button><span class="msg" id="kcsvmsg"></span></div>
  </section>
  <section><h2>KPIs nach AARRR</h2><p class="muted" style="margin:0 0 10px">Fünf Phasen aus den Pirate Metrics, dazu Roadmap-Signale. ⚠ markiert Zahlen, die allein noch keinen Erfolg belegen.</p><div id="kpis"><div class="empty">Noch keine Daten.</div></div></section>
@@ -126,7 +130,7 @@ function load(t){var added=0;t=t.trim();if(!t)return 0;
 function build(){
  var bySid={};chunks.forEach(function(c){(bySid[c.sid]=bySid[c.sid]||[]).push(c)});
  var sessions=Object.keys(bySid).map(function(sid){var cs=bySid[sid].sort(function(a,b){return (a.seite==='landingpage'?0:1)-(b.seite==='landingpage'?0:1)||(a.teil||0)-(b.teil||0)});
-  var code='',events=[],cur='',meta={};cs.forEach(function(c){if(c.code)code=c.code;['land','geraet','ref','region'].forEach(function(k){if(c[k]&&!meta[k])meta[k]=c[k]});(c.events||[]).forEach(function(e){if(e.e==='test_start'&&e.variante)cur=e.variante;events.push(Object.assign({},e,{seite:c.seite,var:e.variante||cur||''}))})});
+  var code='',events=[],cur='',meta={};cs.forEach(function(c){if(c.code)code=c.code;['land','geraet','ref','region','vw','vh'].forEach(function(k){if(c[k]&&!meta[k])meta[k]=c[k]});(c.events||[]).forEach(function(e){if(e.e==='test_start'&&e.variante)cur=e.variante;events.push(Object.assign({},e,{seite:c.seite,var:e.variante||cur||''}))})});
   events.forEach(function(e){e.code=code});return {sid:sid,code:code,events:events,meta:meta}});
  var units=[];sessions.forEach(function(s){var g={};s.events.forEach(function(e){var k=e.var||'';(g[k]=g[k]||[]).push(e)});
   Object.keys(g).forEach(function(v){units.push({sid:s.sid,code:s.code,variante:v,events:g[v]})})});
@@ -196,7 +200,7 @@ var KROWS=[];
 var KURS={kurs:1,dozent:1};
 function renderKan(D){
  var lp=D?D.sessions.filter(function(s){return s.events.some(function(e){return e.e==='lp_aufruf'})}):[];
- var q=function(s){var e=s.events.filter(function(x){return x.e==='lp_aufruf'})[0];return e&&e.quelle||'direkt'};
+ var q=function(s){var e=s.events.filter(function(x){return x.e==='lp_aufruf'})[0];var v=String(e&&e.quelle||'direkt').toLowerCase();return v.indexOf('facebook')===0?'facebook':v};
  var has=function(s,n,f){return s.events.some(function(e){return e.e===n&&(!f||f(e))})};
  function agg(list){var n=list.length,cta=list.filter(function(s){return has(s,'lp_cta_klick')}).length,ts=list.filter(function(s){return has(s,'test_start')}).length,
   an=list.filter(function(s){return has(s,'anfrage_gesendet')}).length,ok=list.filter(function(s){return has(s,'anfrage_gesendet',function(e){return e.produkt==='B'})}).length,
@@ -214,6 +218,10 @@ function renderKan(D){
  $('kland').innerHTML=tbl(['Land','Besuche'],cnt(lp.map(function(s){return s.meta&&s.meta.land})));
  $('kger').innerHTML=tbl(['Gerät','Besuche'],cnt(lp.map(function(s){return s.meta&&s.meta.geraet})));
  $('kref').innerHTML=tbl(['Website','Besuche'],cnt(lp.map(function(s){return s.meta&&s.meta.ref||'keine'})));
+ $('kreg').innerHTML=tbl(['Region','Besuche'],cnt(lp.map(function(s){return s.meta&&s.meta.region})).slice(0,12));
+ var bk=function(w){w=+w;return !w?'nicht erfasst':w<600?'Handy (unter 600 px)':w<1024?'Tablet (600–1023 px)':'Desktop (ab 1024 px)'};
+ $('kbs').innerHTML=tbl(['Klasse','Besuche'],cnt(lp.map(function(s){return bk(s.meta&&s.meta.vw)})));
+ $('kbsg').innerHTML=tbl(['Breite × Höhe','Besuche'],cnt(lp.map(function(s){return s.meta&&s.meta.vw?s.meta.vw+' × '+s.meta.vh:'nicht erfasst'})).slice(0,12));
 }
 $('kcsv').onclick=function(){if(!KROWS.length){$('kcsvmsg').textContent='Noch keine Daten.';return}
  var h=Object.keys(KROWS[0]),t=[h.join(';')].concat(KROWS.map(function(r){return h.map(function(k){var v=r[k];return v==null?'':String(v).replace('.',',')}).join(';')})).join('\n');
