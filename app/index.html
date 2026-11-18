@@ -205,6 +205,7 @@ function view(){var s=st.screen;
   '<button class="btn" data-act="h-next" '+(st.health?'':'disabled')+'>Weiter zur Übersicht</button>';
  if(s==='soll_uebersicht'){var r=PROD[st.request],diff=st.request!==st.cart;
   return '<div class="kicker">Schritt 3 von 3 · Prüfen</div><h1>Deine Anfrage auf einen Blick</h1>'+
+  '<div class="card"><b>Vergleich vor dem Absenden</b><div class="line"></div><div class="row" style="gap:10px;align-items:stretch"><div style="flex:1"><span class="pill past">↺ Letztes Mal</span><div style="margin-top:6px">'+PROD.A.name+'</div></div><div style="align-self:center;font-weight:800">→</div><div style="flex:1"><span class="pill new">Diesmal</span><div style="margin-top:6px"><b>'+r.name+'</b></div></div></div>'+(st.request==='A'?'<div class="fine">Du fragst dasselbe Produkt wie beim letzten Mal an.</div>':'<div class="fine">Du wechselst das Produkt. Das ist keine Gesundheitsänderung.</div>')+'</div>'+
   '<div class="card"><div class="row"><b>Angefragtes Produkt</b><button class="link" data-act="edit-prod">Produkt ändern</button></div><div class="line"></div>'+prod(r)+'</div>'+
   (diff?'<div class="notice warn">Achtung: Das ist <b>nicht</b> das Produkt aus deinem Warenkorb ('+PROD[st.cart].name+').</div>':'')+
   '<div class="medbox"><div class="row">'+med('Gesundheit')+'<button class="link" data-act="edit-health">Gesundheit ändern</button></div><div style="margin-top:6px">'+(st.health==='ja'?'Es gibt etwas Neues':'Unverändert seit der letzten Anfrage')+'</div></div>'+
@@ -221,7 +222,8 @@ function view(){var s=st.screen;
  if(s==='ende'){var other=ist()?'soll':'ist';
   return '<div class="kicker">Danke!</div><h1>Test abgeschlossen</h1><p>Deine Klicks wurden '+(CG.online()?'automatisch übermittelt':'hier lokal gesammelt (Vorschau)')+'. Zur Sicherheit kannst du sie kopieren und in den Chat einfügen.</p>'+
   '<button class="btn sec" data-act="copy">Ergebnis kopieren</button><div class="fine" id="copied"></div><textarea class="json" id="json" readonly>'+esc(JSON.stringify(resultJSON(),null,1))+'</textarea>'+
-  '<a class="btn" href="'+CG.link('./',{v:other,o:'zweiter',quelle:'zweiter_test'})+'">Jetzt '+other.toUpperCase()+' testen</a><button class="btn sec" data-act="teilen">Test mit anderen teilen (Link kopieren)</button><div class="fine" id="geteilt"></div><a class="btn sec" href="'+CG.link('../index.html',{quelle:'nach_test'})+'">Zur Startseite</a>'}
+  '<div class="card" style="margin-top:12px"><b>Lust auf mehr?</b><p class="fine" style="margin:6px 0 8px">Lass dich als Testperson vormerken – ich melde mich, wenn es die nächste Version zu testen gibt.</p><a class="btn" data-act="vormerken" href="'+CG.link('../index.html',{quelle:'nach_test'})+'#vform">Als Testperson vormerken</a></div>'+
+  '<a class="btn sec" href="'+CG.link('./',{v:other,o:'zweiter',quelle:'zweiter_test'})+'">Jetzt '+other.toUpperCase()+' testen</a><button class="btn sec" data-act="teilen">Test mit anderen teilen (Link kopieren)</button><div class="fine" id="geteilt"></div><a class="btn sec" href="'+CG.link('../index.html',{quelle:'nach_test'})+'">Zur Startseite</a>'}
  return '';
 }
 function opt(act,sel,title,sub,right){return '<button class="option'+(sel?' sel':'')+'" data-act="'+act+'" aria-pressed="'+sel+'"><span class="chk">✓</span><span class="txt"><strong>'+title+'</strong>'+(sub?'<small>'+sub+'</small>':'')+'</span>'+right+'</button>'}
@@ -288,7 +290,7 @@ function act(id,el){
  if(id==='pick-new'||id==='pick-old'){st.pick=id==='pick-new'?'new':'old';CG.track('produkt_wahl',{produkt:st.pick==='new'?st.cart:'A',variante:'soll'});render();return}
  if(id==='pick-next'){st.request=st.pick==='new'?st.cart:'A';go(st.health?'soll_uebersicht':'soll_gesundheit');return}
  if(id==='h-no'||id==='h-yes'){var hw=id==='h-no'?'nein':'ja';CG.track('gesundheit_antwort',{wert:hw,erste:st.firstHealth===null,variante:'soll'});if(st.firstHealth===null)st.firstHealth=hw;st.health=hw;render();return}
- if(id==='h-next'){go('soll_uebersicht');return}
+ if(id==='h-next'){CG.track('vergleich_gesehen',{alt:'A',neu:st.request,variante:'soll'});go('soll_uebersicht');return}
  if(id==='edit-prod'){st.aendern++;CG.track('produkt_aendern',{variante:'soll'});go('soll_produkt');return}
  if(id==='edit-health'){st.aendern++;CG.track('gesundheit_aendern',{variante:'soll'});go('soll_gesundheit');return}
  // Absenden
@@ -312,7 +314,8 @@ document.addEventListener('click',function(e){
  if(b.id==='back'){back();return}
  if(b.dataset.tour)return; // Kacheln in der Tour sind nur Anschauung
  var id=b.dataset.act;if(!id)return;
- if(id==='agb-open'){CG.track('agb_geoeffnet');return} // Link öffnet die Demo-AGB im selben Tab
+ if(id==='agb-open'){CG.track('agb_geoeffnet');return}
+ if(id==='vormerken'){CG.track('vormerken_nach_test',{variante:st.variante});CG.flush();return} // Link führt zum Vormerk-Formular auf der Startseite
  e.preventDefault();act(id,b);
 });
 CG.track('app_aufruf',{quelle:CG.S.quelle});

@@ -13,7 +13,9 @@ window.MESSKONZEPT = {
   clarity_id: 'z9cx74st3n',    // Microsoft Clarity: Einstellungen > Übersicht > Projekt-ID
 
   /* --- 2. Allgemein -------------------------------------------------- */
-  version: '2026-11-11-v19',
+  version: '2026-11-18-v20',
+  // Seitenstand für den Vorher-Nachher-Vergleich: bis v19 = Stand A (Projekttage), ab v20 = Stand B (Maßnahmen Folie 38)
+  seitenstand_ab_b: '2026-11-18-v20',
   netlify_form: 'messung',           // Name des Netlify-Formulars (nur falls du weiter Netlify nutzt)
 
   /* Datenspeicher für die eigene Messung (Weg B) und die Formulare:
@@ -99,6 +101,8 @@ window.MESSKONZEPT = {
      param: Werte, die mitgeschickt werden (in GA4 als Dimension registrieren)
      ------------------------------------------------------------------ */
   ereignisse: [
+    { e:'vergleich_gesehen', text:'SOLL-Übersicht: Vergleich Letztes Mal ↔ Diesmal angezeigt' },
+    { e:'vormerken_nach_test', text:'Klick auf „Als Testperson vormerken“ direkt am Testende' },
     // Alle Seiten
     { e:'consent_entscheidung', ort:'Banner',      wann:'Entscheidung im Cookie-Banner', param:'statistik, analyse, irgendeine, quelle' },
     { e:'bildschirm_dauer',     ort:'Alle',        wann:'Beim Wechsel des Bildschirms / Verlassen', param:'name, sek_auf' },
