@@ -99,7 +99,13 @@
   function refDomain(){ try { var r = document.referrer ? new URL(document.referrer).hostname : ''; return r === location.hostname ? '' : r; } catch(_){ return ''; } }
   // Wohin gesendet wird: Google-Tabelle (sammel_url) oder Netlify Forms
   function sammelUrl(){ var u = MK.sammel_url || ''; return /^https:\/\/(script\.google(usercontent)?\.com\/|[a-z0-9-]+\.[a-z0-9-]+\.workers\.dev\/?)/.test(u) ? u : ''; }
+  // Vorschau-Roboter (Link-Vorschauen, Crawler, Headless-Browser) nicht mitzählen
+  function roboter(){
+    var ua = navigator.userAgent || '';
+    return !ua || navigator.webdriver === true || /bot\b|bot\/|crawler|spider|preview|facebookexternalhit|Slackbot|LinkedInBot|WhatsApp|TelegramBot|Twitterbot|Discordbot|SkypeUriPreview|HeadlessChrome|Lighthouse|PTST|Google-InspectionTool|bingpreview|Embedly|Iframely/i.test(ua);
+  }
   function online(){
+    if (roboter()) return false;
     var host = location.hostname, live = MK.live_hosts instanceof RegExp ? MK.live_hosts.test(host) : /\.netlify\.app$/.test(host);
     if (!live) return false;
     return !!sammelUrl() || /\.netlify\.app$/.test(host);
