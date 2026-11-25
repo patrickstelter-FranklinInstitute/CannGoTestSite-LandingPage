@@ -101,6 +101,8 @@ window.MESSKONZEPT = {
      param: Werte, die mitgeschickt werden (in GA4 als Dimension registrieren)
      ------------------------------------------------------------------ */
   ereignisse: [
+    { e:'sw_aufruf', text:'PA3: Seite „Sorte wechseln“ aufgerufen' },
+    { e:'sw_weg_klick', text:'PA3: Weg A (QR-Code, PIN vorausgefüllt) oder B (PIN eintippen) geklickt' },
     { e:'vergleich_gesehen', text:'SOLL-Übersicht: Vergleich Letztes Mal ↔ Diesmal angezeigt' },
     { e:'vormerken_nach_test', text:'Klick auf „Als Testperson vormerken“ direkt am Testende' },
     // Alle Seiten
